@@ -1,5 +1,5 @@
 import 'package:getapps/app/core/exceptions/exception.dart';
-import 'package:getapps/app/features/entities/app_entity.dart';
+import 'package:getapps/app/interactor/entities/app_entity.dart';
 import 'package:result_dart/result_dart.dart';
 
 abstract interface class CodeHostingService {

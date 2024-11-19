@@ -1,11 +1,12 @@
 import 'package:asp/asp.dart';
+import 'package:async/async.dart';
 import 'package:getapps/app/core/extensions/result_extension.dart';
 import 'package:getapps/app/core/states/state.dart';
-import 'package:getapps/app/features/entities/app_entity.dart';
-import 'package:getapps/app/features/entities/repository_entity.dart';
-import 'package:getapps/app/features/services/package_service.dart';
-import 'package:getapps/app/features/states/app_state.dart';
 import 'package:getapps/app/injector.dart';
+import 'package:getapps/app/interactor/entities/app_entity.dart';
+import 'package:getapps/app/interactor/entities/repository_entity.dart';
+import 'package:getapps/app/interactor/services/package_service.dart';
+import 'package:getapps/app/interactor/states/app_state.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../services/app_local_storage_service.dart';
@@ -42,6 +43,7 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
 
   final codeHosting = injector.get<CodeHostingService>();
   final storage = injector.get<AppLocalStorageService>();
+
   final uri = Uri.parse(repositoryUrl);
   final appRepository = RepositoryEntity(
     provider: GitRepositoryProvider.github,
@@ -59,7 +61,27 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
       .updateState(appsState, set);
 });
 
-Future<void> installAppAction(appModel, asset) async {
+CancelableOperation? _installOperation;
+
+Future<void> cancelInstallAppAction() async {
+  await _installOperation?.cancel();
+}
+
+Future<void> installAppAction(AppModel appModel, String asset) async {
+  final currentState = appModel.state;
+
+  await _installOperation?.cancel();
+
+  _installOperation = CancelableOperation //
+          .fromFuture(_installAppAction(appModel, asset))
+      .thenOperation(
+    (_, __) => print('complete'),
+    onError: (p0, p1, p2) => appModel.update(currentState),
+    onCancel: (p0) => appModel.update(currentState),
+  );
+}
+
+Future<int> _installAppAction(AppModel appModel, String asset) async {
   final codeHosting = injector.get<CodeHostingService>();
   final storage = injector.get<AppLocalStorageService>();
   final package = injector.get<PackageService>();
@@ -69,17 +91,17 @@ Future<void> installAppAction(appModel, asset) async {
   appModel.loading();
 
   await codeHosting
-      .getLastRelease(appModel.app) //
-      .flatMap(
-        (app) => codeHosting.downloadAPK(app, asset, (percent) {
-          appModel.downloading(percent);
-        }),
-      )
-      .onSuccess((_) => appModel.loading())
+      .downloadAPK(appModel.app, asset, (percent) {
+        appModel.downloading(percent);
+      })
+      .onSuccess(appModel.loading)
       .flatMap(package.installApp)
       .flatMap(storage.putApp)
-      .onFailure((_) => appModel.update(currentState))
-      .onSuccess((_) => appModel.installed());
+      .pureError(currentState)
+      .onFailure(appModel.update)
+      .onSuccess(appModel.installed);
+
+  return 0;
 }
 
 final uninstallAppAction = atomAction1<AppEntity>((set, app) async {

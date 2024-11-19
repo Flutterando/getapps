@@ -1,6 +1,7 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
-import 'package:getapps/app/features/entities/app_entity.dart';
+import 'package:getapps/app/interactor/entities/app_entity.dart';
 
 abstract class AppState {
   final AppEntity app;
@@ -18,7 +19,7 @@ abstract class AppState {
 
   AppState downloading(double percent) => DownloadingAppState(app, percent);
 
-  AppState installed() => InstalledAppState(app);
+  AppState installed(AppEntity app) => InstalledAppState(app);
 
   AppState newUpdateAvaliable() => NewUpdateAvaliableAppState(app);
 }
@@ -35,6 +36,16 @@ class DownloadingAppState extends AppState {
   final double percent;
 
   const DownloadingAppState(super.app, this.percent);
+
+  @override
+  bool operator ==(covariant DownloadingAppState other) {
+    if (identical(this, other)) return true;
+
+    return other.percent == percent;
+  }
+
+  @override
+  int get hashCode => percent.hashCode;
 }
 
 class InstalledAppState extends AppState {
@@ -52,7 +63,7 @@ class AppModel extends ChangeNotifier {
 
   AppModel(AppEntity app) : _state = AppState.init(app);
 
-  void loading() {
+  void loading([_]) {
     _state = state.loading();
     notifyListeners();
   }
@@ -62,8 +73,8 @@ class AppModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void installed() {
-    _state = state.installed();
+  void installed(AppEntity app) {
+    _state = state.installed(app);
     notifyListeners();
   }
 

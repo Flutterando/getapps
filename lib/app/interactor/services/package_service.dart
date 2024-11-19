@@ -1,4 +1,4 @@
-import 'package:getapps/app/features/entities/app_entity.dart';
+import 'package:getapps/app/interactor/entities/app_entity.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../../core/exceptions/exception.dart';

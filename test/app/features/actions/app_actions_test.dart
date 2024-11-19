@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:getapps/app/features/actions/app_actions.dart';
+import 'package:getapps/app/interactor/actions/app_actions.dart';
 
 void main() {
   group('registerAppRepositoryAction', () {
