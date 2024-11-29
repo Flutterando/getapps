@@ -12,6 +12,7 @@ dependencies:
   auto_injector: ^2.0.5
   flutter:
     sdk: flutter
+  flutter_isolate: ^2.1.0
   result_dart: ^1.1.1
   routefly: ^2.0.4
   uno: ^1.1.12

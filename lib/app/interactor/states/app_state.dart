@@ -15,7 +15,7 @@ abstract class AppState {
     return InstalledAppState(app);
   }
 
-  AppState loading() => LoadingAppState(app);
+  AppState loading([AppEntity? app]) => LoadingAppState(app ?? this.app);
 
   AppState downloading(double percent) => DownloadingAppState(app, percent);
 

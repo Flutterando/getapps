@@ -1,5 +1,7 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:asp/asp.dart';
-import 'package:async/async.dart';
 import 'package:getapps/app/core/extensions/result_extension.dart';
 import 'package:getapps/app/core/states/state.dart';
 import 'package:getapps/app/injector.dart';
@@ -7,6 +9,7 @@ import 'package:getapps/app/interactor/entities/app_entity.dart';
 import 'package:getapps/app/interactor/entities/repository_entity.dart';
 import 'package:getapps/app/interactor/services/package_service.dart';
 import 'package:getapps/app/interactor/states/app_state.dart';
+import 'package:result_dart/functions.dart';
 import 'package:result_dart/result_dart.dart';
 
 import '../services/app_local_storage_service.dart';
@@ -61,47 +64,79 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
       .updateState(appsState, set);
 });
 
-CancelableOperation? _installOperation;
+Isolate? _installIsolate;
+ReceivePort? _installReceivePort;
+Completer? finishIsateCompleter;
+var _isolateExitForced = true;
 
-Future<void> cancelInstallAppAction() async {
-  await _installOperation?.cancel();
+void cancelInstallAppAction([bool force = true]) {
+  _isolateExitForced = force;
+  finishIsateCompleter?.complete();
+  finishIsateCompleter = null;
+
+  _installReceivePort?.close();
+  _installReceivePort = null;
+
+  _installIsolate?.kill(priority: Isolate.immediate);
+  _installIsolate = null;
 }
 
 Future<void> installAppAction(AppModel appModel, String asset) async {
-  final currentState = appModel.state;
+  cancelInstallAppAction(true);
+  final firstState = appModel.state;
 
-  await _installOperation?.cancel();
+  finishIsateCompleter = Completer();
+  _installReceivePort = ReceivePort();
+  _installReceivePort!.listen((message) {
+    if (message is AppState) {
+      appModel.update(message);
+      return;
+    } else if (message == 'finish') {
+      cancelInstallAppAction(false);
+    }
+  });
 
-  _installOperation = CancelableOperation //
-          .fromFuture(_installAppAction(appModel, asset))
-      .thenOperation(
-    (_, __) => print('complete'),
-    onError: (p0, p1, p2) => appModel.update(currentState),
-    onCancel: (p0) => appModel.update(currentState),
+  appModel.loading();
+
+  _installIsolate = await Isolate.spawn(
+    _installAppIsolateAction,
+    (appModel.state, asset, _installReceivePort!.sendPort),
   );
+
+  await finishIsateCompleter!.future;
+  if (_isolateExitForced) {
+    appModel.update(firstState);
+  }
 }
 
-Future<int> _installAppAction(AppModel appModel, String asset) async {
+@pragma('vm:entry-point')
+Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async {
+  final (appState, asset, installReceivePort) = record;
+
+  setupMockInjection();
+
   final codeHosting = injector.get<CodeHostingService>();
   final storage = injector.get<AppLocalStorageService>();
   final package = injector.get<PackageService>();
 
-  final currentState = appModel.state;
+  final currentState = appState;
 
-  appModel.loading();
-
-  await codeHosting
-      .downloadAPK(appModel.app, asset, (percent) {
-        appModel.downloading(percent);
+  final newState = await codeHosting
+      .downloadAPK(appState.app, asset, (percent) {
+        installReceivePort.send(appState.downloading(percent));
       })
-      .onSuccess(appModel.loading)
+      .onSuccess((app) {
+        installReceivePort.send(appState.loading(app));
+      })
       .flatMap(package.installApp)
       .flatMap(storage.putApp)
       .pureError(currentState)
-      .onFailure(appModel.update)
-      .onSuccess(appModel.installed);
+      .map(appState.installed)
+      .fold(id, id);
 
-  return 0;
+  installReceivePort.send(newState);
+  await Future.delayed(const Duration(milliseconds: 300));
+  installReceivePort.send('finish');
 }
 
 final uninstallAppAction = atomAction1<AppEntity>((set, app) async {
