@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:asp/asp.dart';
 import 'package:flutter/material.dart';
-import 'package:getapps/app/interactor/entities/app_entity.dart';
+
+import '../../app.dart';
 
 abstract class AppState {
   final AppEntity app;

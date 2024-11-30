@@ -2,21 +2,12 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:getapps/app/injector.dart';
 import 'package:getapps/app/interactor/actions/app_actions.dart';
 import 'package:getapps/app/interactor/entities/app_entity.dart';
 import 'package:getapps/app/interactor/entities/repository_entity.dart';
-import 'package:getapps/app/interactor/services/app_local_storage_service.dart';
-import 'package:getapps/app/interactor/services/code_hosting_service.dart';
-import 'package:getapps/app/interactor/services/package_service.dart';
 import 'package:getapps/app/interactor/states/app_state.dart';
 
 void main() {
-  setUp(() {
-    injector.replaceInstance<CodeHostingService>(CodeHostingServiceMock());
-    injector.replaceInstance<AppLocalStorageService>(AppLocalStorageServiceMock());
-    injector.replaceInstance<PackageService>(PackageServiceMock());
-  });
   test('installAppAction', () async {
     final app = NotInstallAppEntity(
       repository: RepositoryEntity(

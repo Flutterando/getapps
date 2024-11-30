@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'app_release_entity.dart';
-import 'package_info_entity.dart';
-import 'repository_entity.dart';
+import '../../app.dart';
 
 class AppEntity {
   final PackageInfoEntity packageInfo;

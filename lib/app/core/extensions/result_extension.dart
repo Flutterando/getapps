@@ -2,7 +2,8 @@ import 'package:asp/asp.dart';
 import 'package:getapps/app/core/states/state.dart';
 import 'package:result_dart/result_dart.dart';
 
-extension AsyncResultExtension<T extends Object, E extends Object> on AsyncResult<T, E> {
+extension AsyncResultCustomExtension<T extends Object, E extends Object>
+    on AsyncResult<T, E> {
   AsyncResult<T, E> updateState(Atom<T> state, SetState set) {
     return fold((s) {
       set(baseLoadingState, false);

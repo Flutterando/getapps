@@ -1,7 +1,4 @@
-import 'package:result_dart/result_dart.dart';
-
-import '../../core/exceptions/exception.dart';
-import '../entities/app_entity.dart';
+import '../../app.dart';
 
 abstract interface class AppLocalStorageService {
   AsyncResult<List<AppEntity>, AppException> fetchApps([_]);

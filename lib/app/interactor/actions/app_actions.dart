@@ -1,19 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:asp/asp.dart';
-import 'package:getapps/app/core/extensions/result_extension.dart';
-import 'package:getapps/app/core/states/state.dart';
-import 'package:getapps/app/injector.dart';
-import 'package:getapps/app/interactor/entities/app_entity.dart';
-import 'package:getapps/app/interactor/entities/repository_entity.dart';
-import 'package:getapps/app/interactor/services/package_service.dart';
-import 'package:getapps/app/interactor/states/app_state.dart';
-import 'package:result_dart/functions.dart';
-import 'package:result_dart/result_dart.dart';
-
-import '../services/app_local_storage_service.dart';
-import '../services/code_hosting_service.dart';
+import '../../app.dart';
 
 final fetchAppsActions = atomAction((set) async {
   set(baseLoadingState, true);
@@ -40,7 +28,8 @@ final checkUpdatesActions = atomAction1<List<AppEntity>>((set, apps) async {
   set(appsState, copy);
 });
 
-final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) async {
+final registerAppRepositoryAction =
+    atomAction1<String>((set, repositoryUrl) async {
   set(baseLoadingState, true);
   set(baseExceptionState, null);
 
@@ -110,10 +99,11 @@ Future<void> installAppAction(AppModel appModel, String asset) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async {
+Future<void> _installAppIsolateAction(
+    (AppState, String, SendPort) record) async {
   final (appState, asset, installReceivePort) = record;
 
-  setupMockInjection();
+  setupInjection();
 
   final codeHosting = injector.get<CodeHostingService>();
   final storage = injector.get<AppLocalStorageService>();

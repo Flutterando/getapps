@@ -1,6 +1,4 @@
-import 'package:getapps/app/core/exceptions/exception.dart';
-import 'package:getapps/app/interactor/entities/app_entity.dart';
-import 'package:result_dart/result_dart.dart';
+import '../../app.dart';
 
 abstract interface class CodeHostingService {
   AsyncResult<AppEntity, AppException> getLastRelease(AppEntity app);
