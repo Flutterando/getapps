@@ -16,6 +16,8 @@ dependencies:
   result_dart: ^1.1.1
   routefly: ^2.0.4
   uno: ^1.1.12
+  uicons: ^1.0.1
+  gap: ^3.0.1
   
 
 dev_dependencies:

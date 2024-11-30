@@ -2,21 +2,65 @@
 
 import 'package:routefly/routefly.dart';
 
-import 'app/(public)/splash/splash_page.dart' as a0;
+import 'app/(public)/details_app/details_app_page.dart' as a3;
+import 'app/(public)/home/home_page.dart' as a0;
+import 'app/(public)/my_apps/my_apps_page.dart' as a2;
+import 'app/(public)/register_app/register_app_page.dart' as a4;
+import 'app/(public)/splash/splash_page.dart' as a1;
 
 List<RouteEntity> get routes => [
+      RouteEntity(
+        key: '/home',
+        uri: Uri.parse('/home'),
+        routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
+          ctx,
+          settings,
+          const a0.HomePage(),
+        ),
+      ),
       RouteEntity(
         key: '/splash',
         uri: Uri.parse('/splash'),
         routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
           ctx,
           settings,
-          const a0.SplashPage(),
+          const a1.SplashPage(),
+        ),
+      ),
+      RouteEntity(
+        key: '/my_apps',
+        uri: Uri.parse('/my_apps'),
+        routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
+          ctx,
+          settings,
+          const a2.MyAppsPage(),
+        ),
+      ),
+      RouteEntity(
+        key: '/details_app',
+        uri: Uri.parse('/details_app'),
+        routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
+          ctx,
+          settings,
+          const a3.DetailsAppPage(),
+        ),
+      ),
+      RouteEntity(
+        key: '/register_app',
+        uri: Uri.parse('/register_app'),
+        routeBuilder: (ctx, settings) => Routefly.defaultRouteBuilder(
+          ctx,
+          settings,
+          const a4.RegisterAppPage(),
         ),
       ),
     ];
 
 const routePaths = (
   path: '/',
+  home: '/home',
   splash: '/splash',
+  myApps: '/my_apps',
+  detailsApp: '/details_app',
+  registerApp: '/register_app',
 );
