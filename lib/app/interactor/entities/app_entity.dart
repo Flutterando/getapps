@@ -22,15 +22,6 @@ class AppEntity {
   bool get updateIsAvailable => lastRelease != currentRelease;
   String get appName => packageInfo.name ?? repository.projectName;
 
-  factory AppEntity.empty() {
-    return AppEntity(
-      packageInfo: PackageInfoEntity.empty(),
-      repository: RepositoryEntity.empty(),
-      lastRelease: AppReleaseEntity.empty(),
-      currentRelease: AppReleaseEntity.empty(),
-    );
-  }
-
   static AppEntity notInstallApp(RepositoryEntity repository) {
     return AppEntity(
       repository: repository,
