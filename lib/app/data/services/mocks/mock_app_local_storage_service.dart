@@ -3,13 +3,12 @@ import 'package:getapps/app/app.dart';
 import 'image_bytes.dart';
 
 final _apps = <AppEntity>[
-  AppEntity.notInstallApp(
-    RepositoryEntity(
+  AppEntity(
+    repository: RepositoryEntity(
       organizationName: 'Flutterando',
       projectName: 'yuno',
       provider: GitRepositoryProvider.github,
     ),
-  ).copyWith(
     packageInfo: PackageInfoEntity(
       id: 'br.com.flutterando.yuno',
       name: 'YuNO',
@@ -25,13 +24,12 @@ final _apps = <AppEntity>[
       assets: [],
     ),
   ),
-  AppEntity.notInstallApp(
-    RepositoryEntity(
+  AppEntity(
+    repository: RepositoryEntity(
       organizationName: 'Flutterando',
       projectName: 'playflix',
       provider: GitRepositoryProvider.github,
     ),
-  ).copyWith(
     packageInfo: PackageInfoEntity(
       id: 'br.com.flutterando.playflix',
       name: 'Playflix',
