@@ -8,8 +8,10 @@ final fetchAppsActions = atomAction((set) async {
   set(baseExceptionState, null);
 
   final storage = injector.get<AppLocalStorageService>();
+  final package = injector.get<PackageService>();
   await storage
       .fetchApps() //
+      .flatMap(package.addInfos)
       .map((apps) => apps.map(AppModel.new).toList())
       .updateState(appsState, set);
 });
@@ -34,6 +36,7 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
 
   final codeHosting = injector.get<CodeHostingService>();
   final storage = injector.get<AppLocalStorageService>();
+  final package = injector.get<PackageService>();
 
   final uri = Uri.parse(repositoryUrl);
   final appRepository = RepositoryEntity(
@@ -48,6 +51,7 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
       .getLastRelease(app) //
       .flatMap(storage.putApp)
       .flatMap(storage.fetchApps)
+      .flatMap(package.addInfos)
       .map((apps) => apps.map(AppModel.new).toList())
       .updateState(appsState, set);
 });
@@ -127,28 +131,29 @@ Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async
   installReceivePort.send('finish');
 }
 
-final uninstallAppAction = atomAction1<AppEntity>((set, app) async {
+final uninstallAppAction = atomAction1<AppModel>((set, model) async {
   set(baseExceptionState, null);
 
   final package = injector.get<PackageService>();
   final storage = injector.get<AppLocalStorageService>();
 
   await package
-      .uninstallApp(app) //
+      .uninstallApp(model.app) //
       .flatMap(storage.putApp)
-      .flatMap(storage.fetchApps)
-      .map((apps) => apps.map(AppModel.new).toList())
-      .updateState(appsState, set);
+      .map(model.state.noInstalled)
+      .onSuccess(model.update);
 });
 
 final deleteAppAction = atomAction1<AppEntity>((set, app) async {
   set(baseExceptionState, null);
 
   final storage = injector.get<AppLocalStorageService>();
+  final package = injector.get<PackageService>();
 
   await storage
       .deleteApp(app) //
       .flatMap(storage.fetchApps)
+      .flatMap(package.addInfos)
       .map((apps) => apps.map(AppModel.new).toList())
       .updateState(appsState, set);
 });

@@ -23,6 +23,8 @@ abstract class AppState {
 
   AppState installed(AppEntity app) => InstalledAppState(app);
 
+  AppState noInstalled(AppEntity app) => NotInstallAppState(app);
+
   AppState newUpdateAvaliable() => NewUpdateAvaliableAppState(app);
 }
 

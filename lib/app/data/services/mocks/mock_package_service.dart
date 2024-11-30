@@ -24,4 +24,9 @@ class MockPackageService implements PackageService {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app);
   }
+
+  @override
+  AsyncResult<List<AppEntity>, AppException> addInfos(List<AppEntity> apps) async {
+    return Success(apps);
+  }
 }

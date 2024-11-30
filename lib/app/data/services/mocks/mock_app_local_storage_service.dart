@@ -64,6 +64,11 @@ class MockAppLocalStorageService implements AppLocalStorageService {
   @override
   AsyncResult<AppEntity, AppException> putApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!_apps.contains(app)) {
+      _apps.add(app);
+    }
+
     _apps.add(app);
     return Success(app);
   }
