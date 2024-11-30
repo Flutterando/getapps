@@ -11,10 +11,7 @@ class AppReleaseEntity {
 
   // empty
   static AppReleaseEntity empty() {
-    return AppReleaseEntity(
-      tagName: '',
-      assets: [],
-    );
+    return EmptyAppReleaseEntity();
   }
 
   @override
@@ -26,4 +23,12 @@ class AppReleaseEntity {
 
   @override
   int get hashCode => tagName.hashCode ^ assets.hashCode;
+}
+
+class EmptyAppReleaseEntity extends AppReleaseEntity {
+  EmptyAppReleaseEntity()
+      : super(
+          tagName: '',
+          assets: [],
+        );
 }

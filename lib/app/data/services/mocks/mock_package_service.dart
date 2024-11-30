@@ -1,16 +1,26 @@
-import 'package:getapps/app/core/exceptions/exception.dart';
-import 'package:getapps/app/interactor/entities/app_entity.dart';
-import 'package:getapps/app/interactor/services/package_service.dart';
-import 'package:result_dart/result_dart.dart';
+import 'package:getapps/app/app.dart';
 
 class MockPackageService implements PackageService {
   @override
-  noSuchMethod(Invocation invocation) {
-    return super.noSuchMethod(invocation);
+  AsyncResult<AppEntity, AppException> installApp(AppEntity app) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return Success(app);
   }
 
   @override
-  AsyncResult<AppEntity, AppException> installApp(AppEntity app) async {
+  AsyncResult<AppEntity, AppException> addInfo(AppEntity app) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return Success(app);
+  }
+
+  @override
+  AsyncResult<Unit, AppException> openApp(AppEntity app) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    return Success.unit();
+  }
+
+  @override
+  AsyncResult<AppEntity, AppException> uninstallApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app);
   }

@@ -12,10 +12,15 @@ class RepositoryEntity {
   });
 
   factory RepositoryEntity.empty() {
-    return RepositoryEntity(
-      provider: GitRepositoryProvider.unknow,
-      organizationName: '',
-      projectName: '',
-    );
+    return EmptyRepositoryEntity();
   }
+}
+
+class EmptyRepositoryEntity extends RepositoryEntity {
+  EmptyRepositoryEntity()
+      : super(
+          provider: GitRepositoryProvider.unknow,
+          organizationName: '',
+          projectName: '',
+        );
 }

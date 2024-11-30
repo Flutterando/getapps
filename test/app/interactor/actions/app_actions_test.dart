@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:async/async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:getapps/app/interactor/actions/app_actions.dart';
 import 'package:getapps/app/interactor/entities/app_entity.dart';
@@ -9,8 +8,8 @@ import 'package:getapps/app/interactor/states/app_state.dart';
 
 void main() {
   test('installAppAction', () async {
-    final app = NotInstallAppEntity(
-      repository: RepositoryEntity(
+    final app = AppEntity.notInstallApp(
+      RepositoryEntity(
         provider: GitRepositoryProvider.github,
         organizationName: 'flutter',
         projectName: 'flutter',
@@ -36,8 +35,8 @@ void main() {
   });
 
   test('cancel installAppAction', () async {
-    final app = NotInstallAppEntity(
-      repository: RepositoryEntity(
+    final app = AppEntity.notInstallApp(
+      RepositoryEntity(
         provider: GitRepositoryProvider.github,
         organizationName: 'flutter',
         projectName: 'flutter',
@@ -66,18 +65,17 @@ void main() {
     await installAppAction(appModel, '');
   });
 
-  test('fake cancel', () async {
-    final cancelable = CancelableOperation.fromFuture(() async {
-      await Future.delayed(const Duration(seconds: 5));
-      print('Future finalizcou');
-    }());
+  // test('dsdsd', () {
+  //   final file = File('./test/icon.png');
 
-    await Future.delayed(const Duration(seconds: 2));
-    await cancelable.cancel();
-    print('CPF CANCELADO');
+  //   final image = File('./test/iamge_bytes.dart');
 
-    await Future.delayed(const Duration(seconds: 20));
-  });
+  //   if (image.existsSync()) {
+  //     image.deleteSync();
+  //   }
+
+  //   image.writeAsStringSync('final imageBytes = [${file.readAsBytesSync().join(', ')}];');
+  // });
 }
 
 extension AppModelToStream on AppModel {

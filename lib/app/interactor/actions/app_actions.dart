@@ -28,8 +28,7 @@ final checkUpdatesActions = atomAction1<List<AppEntity>>((set, apps) async {
   set(appsState, copy);
 });
 
-final registerAppRepositoryAction =
-    atomAction1<String>((set, repositoryUrl) async {
+final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) async {
   set(baseLoadingState, true);
   set(baseExceptionState, null);
 
@@ -43,7 +42,7 @@ final registerAppRepositoryAction =
     projectName: uri.pathSegments[1],
   );
 
-  final app = NotInstallAppEntity(repository: appRepository);
+  final app = AppEntity.notInstallApp(appRepository);
 
   await codeHosting
       .getLastRelease(app) //
@@ -99,8 +98,7 @@ Future<void> installAppAction(AppModel appModel, String asset) async {
 }
 
 @pragma('vm:entry-point')
-Future<void> _installAppIsolateAction(
-    (AppState, String, SendPort) record) async {
+Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async {
   final (appState, asset, installReceivePort) = record;
 
   setupInjection();

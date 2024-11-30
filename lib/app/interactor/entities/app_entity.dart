@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
 import '../../app.dart';
@@ -9,12 +10,6 @@ class AppEntity {
   final AppReleaseEntity currentRelease;
   final File? file;
 
-  bool get installCandidate {
-    return (this is NotInstallAppEntity && currentRelease.assets.isNotEmpty //
-        ||
-        lastRelease.tagName != currentRelease.tagName);
-  }
-
   AppEntity({
     required this.packageInfo,
     required this.repository,
@@ -22,14 +17,42 @@ class AppEntity {
     required this.currentRelease,
     this.file,
   });
-}
 
-class NotInstallAppEntity extends AppEntity {
-  NotInstallAppEntity({
-    required super.repository,
-  }) : super(
-          lastRelease: AppReleaseEntity.empty(),
-          currentRelease: AppReleaseEntity.empty(),
-          packageInfo: PackageInfoEntity.empty(),
-        );
+  bool get appNotInstall => packageInfo is EmptyPackageInfoEntity;
+  bool get updateIsAvailable => lastRelease != currentRelease;
+  String get appName => packageInfo.name ?? repository.projectName;
+
+  factory AppEntity.empty() {
+    return AppEntity(
+      packageInfo: PackageInfoEntity.empty(),
+      repository: RepositoryEntity.empty(),
+      lastRelease: AppReleaseEntity.empty(),
+      currentRelease: AppReleaseEntity.empty(),
+    );
+  }
+
+  static AppEntity notInstallApp(RepositoryEntity repository) {
+    return AppEntity(
+      repository: repository,
+      packageInfo: PackageInfoEntity.empty(),
+      lastRelease: AppReleaseEntity.empty(),
+      currentRelease: AppReleaseEntity.empty(),
+    );
+  }
+
+  AppEntity copyWith({
+    PackageInfoEntity? packageInfo,
+    RepositoryEntity? repository,
+    AppReleaseEntity? lastRelease,
+    AppReleaseEntity? currentRelease,
+    File? file,
+  }) {
+    return AppEntity(
+      packageInfo: packageInfo ?? this.packageInfo,
+      repository: repository ?? this.repository,
+      lastRelease: lastRelease ?? this.lastRelease,
+      currentRelease: currentRelease ?? this.currentRelease,
+      file: file ?? this.file,
+    );
+  }
 }

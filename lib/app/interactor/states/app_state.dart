@@ -8,10 +8,13 @@ abstract class AppState {
   const AppState(this.app);
 
   static AppState init(AppEntity app) {
-    if (app is NotInstallAppEntity) {
+    if (app.appNotInstall) {
       return NotInstallAppState(app);
+    } else if (app.updateIsAvailable) {
+      return NewUpdateAvaliableAppState(app);
+    } else {
+      return InstalledAppState(app);
     }
-    return InstalledAppState(app);
   }
 
   AppState loading([AppEntity? app]) => LoadingAppState(app ?? this.app);
