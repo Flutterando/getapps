@@ -123,6 +123,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gap:
+    dependency: "direct main"
+    description:
+      name: gap
+      sha256: f19387d4e32f849394758b91377f9153a1b41d79513ef7668c088c77dbc6955d
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   hook_state:
     dependency: transitive
     description:
@@ -296,6 +304,70 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uicons:
+    dependency: "direct main"
+    description:
+      name: uicons
+      sha256: "07c9d221c76462b6f6f7e41bb36db3826a9da4ad166167f7a5f9d629b0136483"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  uicons_bold_rounded:
+    dependency: transitive
+    description:
+      name: uicons_bold_rounded
+      sha256: d0cb77efa94e6737a8e25a385c9164d5099e543373a415313eb457f9b7e5d94e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_bold_straight:
+    dependency: transitive
+    description:
+      name: uicons_bold_straight
+      sha256: f2d6649748744b424a689082868374636d9bea4cea1db15da6ba288b5e9a0b8e
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_brands:
+    dependency: transitive
+    description:
+      name: uicons_brands
+      sha256: "4bffb4681e55cfb43c11a773c1976b9a3930723883ae67bafa9d92fba7ab7c5f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_regular_rounded:
+    dependency: transitive
+    description:
+      name: uicons_regular_rounded
+      sha256: "80bf870676524fb48698a2e2037e76de6e81d5d10999191362a89de946fad541"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_regular_straight:
+    dependency: transitive
+    description:
+      name: uicons_regular_straight
+      sha256: "967cbcbc75f2b5247b7c6018a8594a6e36745e37146531bc726ab5ffde4e9e4f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_solid_rounded:
+    dependency: transitive
+    description:
+      name: uicons_solid_rounded
+      sha256: "2a8ee5654941f9777bddf109acc691b60211bdef6d0249851968ce9aa220473f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  uicons_solid_straight:
+    dependency: transitive
+    description:
+      name: uicons_solid_straight
+      sha256: a751ac73eda538907e672951f80b7a9e3a117084afa50f5b6baae2edf285cb04
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   universal_io:
     dependency: transitive
     description:
