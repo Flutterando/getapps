@@ -10,7 +10,7 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      theme: darkTheme,
+      theme: lightTheme,
       debugShowCheckedModeBanner: false,
       routerConfig: Routefly.routerConfig(
         routes: routes,

@@ -14,21 +14,8 @@ class MyAppsPage extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              toolbarHeight: 75,
-              surfaceTintColor: context.colorPalette.surface,
-              leading: GestureDetector(
-                onTap: () => Routefly.pop(context),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  size: 13,
-                  color: context.themeIsDark //
-                      ? context.colors.white
-                      : context.colors.black,
-                ),
-              ),
-              floating: true,
-              centerTitle: true,
+            SliverDefaultAppbar(
+              onBack: () => Routefly.pop(context),
               title: Text(
                 'Meus Aplicativos',
                 style: context.textTheme.displayLarge,

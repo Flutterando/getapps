@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getapps/app/design_system/design_system.dart';
 
 import 'app_colors.dart';
 import 'app_text_style.dart';
@@ -99,6 +100,18 @@ ThemeData get lightTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
         side: BorderSide.none,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        minimumSize: WidgetStateProperty.all(const Size(double.infinity, 48)),
+        backgroundColor: WidgetStateProperty.all(colors.red),
+        padding: WidgetStateProperty.all(14.0.paddingVertical),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18), // Definindo o borderRadius
+          ),
+        ),
       ),
     ),
   );

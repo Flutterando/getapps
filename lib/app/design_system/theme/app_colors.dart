@@ -23,7 +23,7 @@ class AppColors extends ThemeExtension<AppColors> {
     this.grayHint = const Color(0xFF898B8C),
     this.white = const Color(0xffffffff),
     this.black = const Color(0xff000000),
-    this.red = const Color(0xFFF74451),
+    this.red = const Color(0xffC22445),
   });
 
   @override
