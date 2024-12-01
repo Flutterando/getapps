@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
 import 'package:getapps/app/app.dart';
@@ -11,17 +12,31 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with HookStateMixin {
+  final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
   late final _pageController = PageController(viewportFraction: 0.90);
 
   @override
+  void initState() {
+    super.initState();
+
+    fetchAppsActions();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final apps = useAtomState(appsState);
+
     return Scaffold(
         body: SafeArea(
       child: CustomScrollView(
         slivers: [
           SliverAppbarHome(
-            onChanged: (value) {},
+            onChanged: (value) {
+              debounceSearch.call(() {
+                print("search: $value");
+              });
+            },
             onMyApp: () => Routefly.push(routePaths.myApps),
             onRegisterApp: () => Routefly.push(routePaths.registerApp),
           ),
@@ -41,8 +56,8 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       return HighlightCard(
                         title: 'Playflix',
-                        infoLabel: 'stream • video',
-                        sizeLabel: '64 MB',
+                        infoLabel: 'github',
+                        sizeLabel: 'Flutterando',
                         onPressed: () => Routefly.push(routePaths.detailsApp),
                       );
                     },
@@ -52,57 +67,76 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SliverGap(32),
-          SliverToBoxAdapter(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TitleSectionHome(title: 'Novos apps'),
-                SizedBox(
-                  height: context.screenHeight * 0.18,
-                  child: ListView.builder(
-                    itemCount: 6,
-                    scrollDirection: Axis.horizontal,
-                    padding: 12.0.paddingRight,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: 12.0.paddingLeft,
-                        child: AppTile.vertical(
-                          title: '',
-                          infoLabel: '',
-                          sizeLabel: '',
-                          onPressed: () => Routefly.push(routePaths.detailsApp),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SliverGap(30),
+          // Validar se faz sentido manter isso
+          // SliverToBoxAdapter(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.start,
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       const TitleSectionHome(title: 'Novos apps'),
+          //       SizedBox(
+          //         height: context.screenHeight * 0.18,
+          //         child: ListView.builder(
+          //           itemCount: 6,
+          //           scrollDirection: Axis.horizontal,
+          //           padding: 12.0.paddingRight,
+          //           itemBuilder: (context, index) {
+          //             return Padding(
+          //               padding: 12.0.paddingLeft,
+          //               child: AppTile.vertical(
+          //                 title: 'Playflix',
+          //                 infoLabel: 'github',
+          //                 onPressed: () => Routefly.push(routePaths.detailsApp),
+          //               ),
+          //             );
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // const SliverGap(30),
           const SliverToBoxAdapter(
-            child: TitleSectionHome(title: 'Novos apps'),
+            child: TitleSectionHome(title: 'Outros apps'),
           ),
-          SliverPadding(
-            padding: 12.0.paddingHorizontal,
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Container(
-                    margin: 16.0.paddingBottom,
-                    child: AppTile.horizontal(
-                      onPressed: () => Routefly.push(routePaths.detailsApp),
-                      title: 'Playflix',
-                      infoLabel: 'videos • stream',
-                      sizeLabel: '80 MB',
-                    ),
-                  );
-                },
-                childCount: 20,
+          if (apps.isEmpty)
+            SliverPadding(
+              padding: 12.0.paddingHorizontal,
+              sliver: const SliverListAppTileSkeleton(childCount: 3),
+            ),
+          if (apps.isNotEmpty)
+            SliverPadding(
+              padding: 12.0.paddingHorizontal,
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    final appModel = apps[index];
+
+                    return Container(
+                      margin: 16.0.paddingBottom,
+                      child: AppTile.horizontal(
+                        onPressed: () => Routefly.push(
+                          routePaths.detailsApp,
+                          arguments: appModel,
+                        ),
+                        image: appModel.app.packageInfo.imageBytes.isNotEmpty //
+                            ? Image.memory(
+                                Uint8List.fromList(
+                                  appModel.app.packageInfo.imageBytes,
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        title: appModel.app.appName,
+                        infoLabel: appModel.app.repository.organizationName,
+                        sizeLabel: appModel.app.repository.provider.name,
+                      ),
+                    );
+                  },
+                  childCount: apps.length,
+                ),
               ),
             ),
-          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: 32.0.paddingTop + 24.0.paddingBottom,

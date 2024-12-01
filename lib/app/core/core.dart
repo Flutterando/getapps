@@ -8,3 +8,4 @@ export 'package:uno/uno.dart';
 export 'exceptions/exception.dart';
 export 'extensions/result_extension.dart';
 export 'states/state.dart';
+export 'functions/functions.dart';

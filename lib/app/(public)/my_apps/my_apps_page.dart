@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:getapps/app/(public)/home/home_page.dart';
+import 'package:flutter/services.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
 
 import '../home/widgets/widgets.dart';
 
-class MyAppsPage extends StatelessWidget {
+class MyAppsPage extends StatefulWidget {
   const MyAppsPage({super.key});
 
   @override
+  State<MyAppsPage> createState() => _MyAppsPageState();
+}
+
+class _MyAppsPageState extends State<MyAppsPage> with HookStateMixin {
+  @override
   Widget build(BuildContext context) {
+    final apps = useAtomState(myAppsState);
+
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -26,17 +33,30 @@ class MyAppsPage extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
+                    final appModel = apps[index];
+
                     return Container(
                       margin: 16.0.paddingBottom,
                       child: AppTile.horizontal(
-                        onPressed: () => Routefly.push(routePaths.detailsApp),
-                        title: 'Playflix',
-                        infoLabel: 'videos • stream',
-                        sizeLabel: '80 MB',
+                        onPressed: () => Routefly.push(
+                          routePaths.detailsApp,
+                          arguments: appModel,
+                        ),
+                        image: appModel.app.packageInfo.imageBytes.isNotEmpty //
+                            ? Image.memory(
+                                Uint8List.fromList(
+                                  appModel.app.packageInfo.imageBytes,
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        title: appModel.app.appName,
+                        infoLabel: appModel.app.repository.organizationName,
+                        sizeLabel: appModel.app.repository.provider.name,
                       ),
                     );
                   },
-                  childCount: 20,
+                  childCount: apps.length,
                 ),
               ),
             ),

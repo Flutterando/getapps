@@ -109,7 +109,7 @@ ThemeData get lightTheme {
         padding: WidgetStateProperty.all(14.0.paddingVertical),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18), // Definindo o borderRadius
+            borderRadius: BorderRadius.circular(18),
           ),
         ),
       ),

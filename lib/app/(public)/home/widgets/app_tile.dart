@@ -9,20 +9,23 @@ class AppTile extends StatelessWidget {
     required this.sizeLabel,
     required this.onPressed,
     required this.isVertical,
+    this.image,
   });
 
   factory AppTile.vertical({
     required String title,
     required String infoLabel,
-    required String sizeLabel,
+    String? sizeLabel,
     required VoidCallback onPressed,
+    Image? image,
   }) =>
       AppTile._(
         infoLabel: infoLabel,
-        sizeLabel: sizeLabel,
+        sizeLabel: sizeLabel ?? '',
         onPressed: onPressed,
         title: title,
         isVertical: true,
+        image: image,
       );
 
   factory AppTile.horizontal({
@@ -30,6 +33,7 @@ class AppTile extends StatelessWidget {
     required String infoLabel,
     required String sizeLabel,
     required VoidCallback onPressed,
+    Image? image,
   }) =>
       AppTile._(
         infoLabel: infoLabel,
@@ -37,6 +41,7 @@ class AppTile extends StatelessWidget {
         onPressed: onPressed,
         title: title,
         isVertical: false,
+        image: image,
       );
 
   final String title;
@@ -44,6 +49,7 @@ class AppTile extends StatelessWidget {
   final String sizeLabel;
   final VoidCallback onPressed;
   final bool isVertical;
+  final Image? image;
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +59,16 @@ class AppTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppAvatar.large(),
+            AppAvatar.large(
+              image: image,
+            ),
             const Gap(12),
             Text(
-              'Discord',
+              title,
               style: context.textTheme.labelLarge,
             ),
             Text(
-              '80 MB',
+              infoLabel,
               style: context.textTheme.labelMedium,
             ),
           ],
@@ -72,7 +80,9 @@ class AppTile extends StatelessWidget {
       onTap: onPressed,
       child: Row(
         children: [
-          AppAvatar.medium(),
+          AppAvatar.medium(
+            image: image,
+          ),
           const Gap(12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

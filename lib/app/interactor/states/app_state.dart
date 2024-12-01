@@ -94,3 +94,9 @@ class AppModel extends ChangeNotifier {
 }
 
 final appsState = atom<List<AppModel>>([]);
+
+final myAppsState = selector((get) {
+  final apps = get(appsState);
+
+  return apps.where((state) => !state.app.appNotInstall).toList();
+});
