@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
+import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,8 +22,8 @@ class _HomePageState extends State<HomePage> {
         slivers: [
           SliverAppbarHome(
             onChanged: (value) {},
-            onMyApp: () {},
-            onRegisterApp: () {},
+            onMyApp: () => Routefly.push(routePaths.myApps),
+            onRegisterApp: () => Routefly.push(routePaths.registerApp),
           ),
           const SliverGap(32),
           SliverToBoxAdapter(
@@ -42,9 +43,7 @@ class _HomePageState extends State<HomePage> {
                         title: 'Playflix',
                         infoLabel: 'stream • video',
                         sizeLabel: '64 MB',
-                        onPressed: () {
-                          print("clique $index");
-                        },
+                        onPressed: () => Routefly.push(routePaths.detailsApp),
                       );
                     },
                   ),
@@ -72,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                           title: '',
                           infoLabel: '',
                           sizeLabel: '',
-                          onPressed: () {},
+                          onPressed: () => Routefly.push(routePaths.detailsApp),
                         ),
                       );
                     },
@@ -93,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                   return Container(
                     margin: 16.0.paddingBottom,
                     child: AppTile.horizontal(
-                      onPressed: () {},
+                      onPressed: () => Routefly.push(routePaths.detailsApp),
                       title: 'Playflix',
                       infoLabel: 'videos • stream',
                       sizeLabel: '80 MB',

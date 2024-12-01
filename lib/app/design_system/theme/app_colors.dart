@@ -9,6 +9,8 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color grayLight;
   final Color grayText;
   final Color grayHint;
+  final Color white;
+  final Color black;
 
   final Color red;
 
@@ -19,6 +21,8 @@ class AppColors extends ThemeExtension<AppColors> {
     this.grayLight = const Color(0xFF898B8C),
     this.grayText = const Color(0xFFB7B7B7),
     this.grayHint = const Color(0xFF898B8C),
+    this.white = const Color(0xffffffff),
+    this.black = const Color(0xff000000),
     this.red = const Color(0xFFF74451),
   });
 
@@ -31,6 +35,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? grayText,
     Color? grayHint,
     Color? red,
+    Color? white,
+    Color? black,
   }) {
     return AppColors(
       blackBackground: blackBackground ?? this.blackBackground,
@@ -40,6 +46,8 @@ class AppColors extends ThemeExtension<AppColors> {
       grayText: grayText ?? this.grayText,
       grayHint: grayHint ?? this.grayHint,
       red: red ?? this.red,
+      white: white ?? this.white,
+      black: black ?? this.black,
     );
   }
 
@@ -56,6 +64,8 @@ class AppColors extends ThemeExtension<AppColors> {
       grayText: Color.lerp(grayText, other.grayText, t)!,
       grayHint: Color.lerp(grayHint, other.grayHint, t)!,
       red: Color.lerp(red, other.red, t)!,
+      white: Color.lerp(white, other.white, t)!,
+      black: Color.lerp(black, other.black, t)!,
     );
   }
 }

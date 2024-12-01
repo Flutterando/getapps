@@ -8,6 +8,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   final TextStyle labelSmall;
   final TextStyle labelMedium;
   final TextStyle labelLarge;
+  final TextStyle displayLarge;
 
   const AppTextStyles({
     this.headlineLarge = const TextStyle(
@@ -37,6 +38,10 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     this.labelSmall = const TextStyle(
       fontSize: 8,
     ),
+    this.displayLarge = const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+    ),
   });
 
   @override
@@ -48,6 +53,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     TextStyle? labelLarge,
     TextStyle? labelSmall,
     TextStyle? labelMedium,
+    TextStyle? displayLarge,
   }) {
     return AppTextStyles(
       headlineLarge: headlineLarge ?? this.headlineLarge,
@@ -57,6 +63,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       labelLarge: labelLarge ?? this.labelLarge,
       labelMedium: labelMedium ?? this.bodySmall,
       labelSmall: labelSmall ?? this.labelSmall,
+      displayLarge: displayLarge ?? this.displayLarge,
     );
   }
 
@@ -74,6 +81,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       labelLarge: TextStyle.lerp(labelLarge, other.labelLarge, t)!,
       labelMedium: TextStyle.lerp(labelMedium, other.labelMedium, t)!,
       labelSmall: TextStyle.lerp(labelSmall, other.labelSmall, t)!,
+      displayLarge: TextStyle.lerp(displayLarge, other.labelSmall, t)!,
     );
   }
 }

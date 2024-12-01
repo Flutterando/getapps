@@ -42,6 +42,9 @@ ThemeData get lightTheme {
       labelSmall: textStyles.labelSmall.copyWith(
         color: const Color(0xff000000),
       ),
+      displayLarge: textStyles.displayLarge.copyWith(
+        color: const Color(0xff000000),
+      ),
     ),
     extensions: const [
       AppColors(),
