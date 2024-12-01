@@ -43,4 +43,8 @@ abstract class AndroidPackagePlatform extends PlatformInterface {
   Future<bool> installApp(String apkFilePath) {
     throw UnimplementedError('installApp() has not been implemented.');
   }
+
+  Future<bool> checkAndRequestInstallPermission() {
+    throw UnimplementedError('checkAndRequestInstallPermission() has not been implemented.');
+  }
 }

@@ -19,18 +19,22 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
 
   private lateinit var channel : MethodChannel
   private lateinit var applicationContext: Context
+  private lateinit var installer: APKInstaller
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "android_package")
     channel.setMethodCallHandler(this)
     applicationContext = flutterPluginBinding.applicationContext
+    installer = APKInstaller(applicationContext)
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "openApp") {
+    if (call.method == "checkAndRequestInstallPermission") {
+      result.success(installer.checkAndRequestInstallPermission())
+    } else if (call.method == "openApp") {
       result.success(openAppByPackageId(call.arguments<String>()!!))
     } else if (call.method == "installApp") {
-      result.success(installAPK(call.arguments<String>()!!))
+      result.success(installer.installAPK(call.arguments<String>()!!))
     } else if (call.method == "uninstallApp") {
       result.success(uninstallAppByPackageId(call.arguments<String>()!!))
     } else if (call.method == "getInfoById") {
@@ -103,40 +107,7 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
-  private fun installAPK( apkFilePath: String): Boolean {
-    return try {
-      val apkFile = File(apkFilePath)
-      if (!apkFile.exists()) {
-        return false
-      }
-
-      val apkUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        FileProvider.getUriForFile(
-          applicationContext,
-          "${applicationContext.packageName}.fileprovider",
-          apkFile
-        )
-      } else {
-        Uri.fromFile(apkFile)
-      }
-
-      val intent = Intent(Intent.ACTION_VIEW).apply {
-        setDataAndType(apkUri, "application/vnd.android.package-archive")
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-      }
-      Log.d("InstallAPK", "APK File Path: $apkUri")
-      applicationContext.startActivity(intent)
-      true
-    } catch (e: Exception) {
-      e.printStackTrace()
-      false
-    }
-  }
-
-  fun uninstallAppByPackageId(packageId: String): Boolean {
+  private fun uninstallAppByPackageId(packageId: String): Boolean {
     return try {
       val uri = Uri.parse("package:$packageId")
       val intent = Intent(Intent.ACTION_DELETE, uri).apply {
@@ -151,7 +122,7 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
   }
 
 
-  fun android.graphics.drawable.Drawable.toBitmap(): android.graphics.Bitmap {
+  private fun android.graphics.drawable.Drawable.toBitmap(): android.graphics.Bitmap {
     if (this is android.graphics.drawable.BitmapDrawable) {
       return this.bitmap
     }
