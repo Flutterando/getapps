@@ -48,45 +48,51 @@ class AppTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isVertical) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppAvatar.large(),
-          const Gap(12),
-          Text(
-            'Discord',
-            style: context.textTheme.labelLarge,
-          ),
-          Text(
-            '80 MB',
-            style: context.textTheme.labelMedium,
-          ),
-        ],
-      );
-    }
-
-    return Row(
-      children: [
-        AppAvatar.medium(),
-        const Gap(12),
-        Column(
+      return GestureDetector(
+        onTap: onPressed,
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            AppAvatar.large(),
+            const Gap(12),
             Text(
-              title,
-              style: context.textTheme.bodyMedium,
+              'Discord',
+              style: context.textTheme.labelLarge,
             ),
             Text(
-              infoLabel,
-              style: context.textTheme.labelMedium,
-            ),
-            Text(
-              sizeLabel,
+              '80 MB',
               style: context.textTheme.labelMedium,
             ),
           ],
-        )
-      ],
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTap: onPressed,
+      child: Row(
+        children: [
+          AppAvatar.medium(),
+          const Gap(12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: context.textTheme.bodyMedium,
+              ),
+              Text(
+                infoLabel,
+                style: context.textTheme.labelMedium,
+              ),
+              Text(
+                sizeLabel,
+                style: context.textTheme.labelMedium,
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

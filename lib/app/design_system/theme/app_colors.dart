@@ -19,7 +19,7 @@ class AppColors extends ThemeExtension<AppColors> {
     this.grayStrong = const Color(0xFF28292B),
     this.grayMedium = const Color(0xFF36373B),
     this.grayLight = const Color(0xFF898B8C),
-    this.grayText = const Color(0xFFB7B7B7),
+    this.grayText = const Color(0xFF939AA5),
     this.grayHint = const Color(0xFF898B8C),
     this.white = const Color(0xffffffff),
     this.black = const Color(0xff000000),

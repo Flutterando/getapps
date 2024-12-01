@@ -17,6 +17,11 @@ class AppAvatar extends StatelessWidget {
         width: 96,
       );
 
+  factory AppAvatar.extraLarge() => const AppAvatar._(
+    height: 104,
+    width: 104,
+  );
+
   final double width;
   final double height;
 
