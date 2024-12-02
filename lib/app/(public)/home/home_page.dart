@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:getapps/app/(public)/home/widgets/sliver_highlight_card_skeleton.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
@@ -41,34 +42,40 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             onRegisterApp: () => Routefly.push(routePaths.registerApp),
           ),
           const SliverGap(32),
-          SliverToBoxAdapter(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const TitleSectionHome(title: 'Destaques da semana'),
-                SizedBox(
-                  height: context.screenHeight * 0.15,
-                  child: PageView.builder(
-                    itemCount: apps.length,
-                    controller: _pageController,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final appModel = apps[index];
+          if (apps.isEmpty)
+            const SliverHighlightCardSkeleton(itemCount: 2),
+          if (apps.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const TitleSectionHome(title: 'Destaques da semana'),
+                  SizedBox(
+                    height: context.screenHeight * 0.15,
+                    child: PageView.builder(
+                      itemCount: apps.length,
+                      controller: _pageController,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final appModel = apps[index];
 
-                      return HighlightCard(
-                        title: appModel.app.appName,
-                        infoLabel: 'github',
-                        sizeLabel: 'Flutterando',
-                        imageBytes: appModel.app.packageInfo.imageBytes,
-                        onPressed: () => Routefly.push(routePaths.detailsApp),
-                      );
-                    },
+                        return HighlightCard(
+                          title: appModel.app.appName,
+                          infoLabel: 'github',
+                          sizeLabel: 'Flutterando',
+                          imageBytes: appModel.app.packageInfo.imageBytes,
+                          onPressed: () => Routefly.push(
+                            routePaths.detailsApp,
+                            arguments: appModel,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
           const SliverGap(32),
           // Validar se faz sentido manter isso
           // SliverToBoxAdapter(
@@ -105,7 +112,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           if (apps.isEmpty)
             SliverPadding(
               padding: 12.0.paddingHorizontal,
-              sliver: const SliverListAppTileSkeleton(childCount: 3),
+              sliver: const SliverListAppTileSkeleton(childCount: 6),
             ),
           if (apps.isNotEmpty)
             SliverPadding(
