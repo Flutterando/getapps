@@ -18,6 +18,7 @@ dependencies:
   uno: ^1.1.12
   uicons: ^1.0.1
   gap: ^3.0.1
+  image: ^4.2.0
   
 
 dev_dependencies:

@@ -50,14 +50,17 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                 SizedBox(
                   height: context.screenHeight * 0.15,
                   child: PageView.builder(
-                    itemCount: 3,
+                    itemCount: apps.length,
                     controller: _pageController,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
+                      final appModel = apps[index];
+
                       return HighlightCard(
-                        title: 'Playflix',
+                        title: appModel.app.appName,
                         infoLabel: 'github',
                         sizeLabel: 'Flutterando',
+                        imageBytes: appModel.app.packageInfo.imageBytes,
                         onPressed: () => Routefly.push(routePaths.detailsApp),
                       );
                     },
@@ -119,14 +122,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                           routePaths.detailsApp,
                           arguments: appModel,
                         ),
-                        image: appModel.app.packageInfo.imageBytes.isNotEmpty //
-                            ? Image.memory(
-                                Uint8List.fromList(
-                                  appModel.app.packageInfo.imageBytes,
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        imageBytes: appModel.app.packageInfo.imageBytes,
                         title: appModel.app.appName,
                         infoLabel: appModel.app.repository.organizationName,
                         sizeLabel: appModel.app.repository.provider.name,

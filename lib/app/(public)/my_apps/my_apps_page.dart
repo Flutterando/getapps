@@ -42,14 +42,7 @@ class _MyAppsPageState extends State<MyAppsPage> with HookStateMixin {
                           routePaths.detailsApp,
                           arguments: appModel,
                         ),
-                        image: appModel.app.packageInfo.imageBytes.isNotEmpty //
-                            ? Image.memory(
-                                Uint8List.fromList(
-                                  appModel.app.packageInfo.imageBytes,
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        imageBytes: appModel.app.packageInfo.imageBytes,
                         title: appModel.app.appName,
                         infoLabel: appModel.app.repository.organizationName,
                         sizeLabel: appModel.app.repository.provider.name,

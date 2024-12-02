@@ -40,14 +40,7 @@ class _DetailsAppPageState extends State<DetailsAppPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppAvatar.extraLarge(
-                        image: appModel.app.packageInfo.imageBytes.isNotEmpty //
-                            ? Image.memory(
-                                Uint8List.fromList(
-                                  appModel.app.packageInfo.imageBytes,
-                                ),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
+                        imageBytes: appModel.app.packageInfo.imageBytes,
                       ),
                       const Gap(12.0),
                       Column(

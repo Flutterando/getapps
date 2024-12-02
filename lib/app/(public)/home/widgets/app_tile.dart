@@ -9,7 +9,7 @@ class AppTile extends StatelessWidget {
     required this.sizeLabel,
     required this.onPressed,
     required this.isVertical,
-    this.image,
+    this.imageBytes,
   });
 
   factory AppTile.vertical({
@@ -17,7 +17,7 @@ class AppTile extends StatelessWidget {
     required String infoLabel,
     String? sizeLabel,
     required VoidCallback onPressed,
-    Image? image,
+    List<int>? imageBytes,
   }) =>
       AppTile._(
         infoLabel: infoLabel,
@@ -25,7 +25,7 @@ class AppTile extends StatelessWidget {
         onPressed: onPressed,
         title: title,
         isVertical: true,
-        image: image,
+        imageBytes: imageBytes,
       );
 
   factory AppTile.horizontal({
@@ -33,7 +33,7 @@ class AppTile extends StatelessWidget {
     required String infoLabel,
     required String sizeLabel,
     required VoidCallback onPressed,
-    Image? image,
+    List<int>? imageBytes,
   }) =>
       AppTile._(
         infoLabel: infoLabel,
@@ -41,7 +41,7 @@ class AppTile extends StatelessWidget {
         onPressed: onPressed,
         title: title,
         isVertical: false,
-        image: image,
+        imageBytes: imageBytes,
       );
 
   final String title;
@@ -49,7 +49,7 @@ class AppTile extends StatelessWidget {
   final String sizeLabel;
   final VoidCallback onPressed;
   final bool isVertical;
-  final Image? image;
+  final List<int>? imageBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +59,7 @@ class AppTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppAvatar.large(
-              image: image,
-            ),
+            AppAvatar.large(imageBytes: imageBytes),
             const Gap(12),
             Text(
               title,
@@ -80,9 +78,7 @@ class AppTile extends StatelessWidget {
       onTap: onPressed,
       child: Row(
         children: [
-          AppAvatar.medium(
-            image: image,
-          ),
+          AppAvatar.medium(imageBytes: imageBytes),
           const Gap(12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
