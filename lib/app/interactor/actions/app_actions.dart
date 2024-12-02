@@ -12,22 +12,25 @@ final fetchAppsActions = atomAction((set) async {
   await storage
       .fetchApps() //
       .flatMap(package.addInfos)
-      .map((apps) => apps.map(AppModel.new).toList())
+      .map(_mapAppsToModels)
       .updateState(appsState, set);
 });
 
-final checkUpdatesActions = atomAction1<List<AppEntity>>((set, apps) async {
+Future<bool> checkInstallPersmission() async {
+  final package = injector.get<PackageService>();
+  return package.checkInstallPermission().isSuccess();
+}
+
+final checkUpdatesActions = atomAction1<List<AppModel>>((set, apps) async {
   set(baseExceptionState, null);
-  final copy = apps.toList();
   final codeHosting = injector.get<CodeHostingService>();
+  final installedApps = apps.where((app) => app.state is InstalledAppState).toList();
 
-  for (var i = 0; i < copy.length; i++) {
+  for (var i = 0; i < installedApps.length; i++) {
     await codeHosting
-        .getLastRelease(copy[i]) //
-        .onSuccess((app) => copy[i] = app);
+        .getLastRelease(installedApps[i].app) //
+        .onSuccess((app) => installedApps[i].update(AppState.init(app)));
   }
-
-  set(appsState, copy);
 });
 
 final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) async {
@@ -52,7 +55,7 @@ final registerAppRepositoryAction = atomAction1<String>((set, repositoryUrl) asy
       .flatMap(storage.putApp)
       .flatMap(storage.fetchApps)
       .flatMap(package.addInfos)
-      .map((apps) => apps.map(AppModel.new).toList())
+      .map(_mapAppsToModels)
       .updateState(appsState, set);
 });
 
@@ -108,7 +111,6 @@ Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async
   setupInjection();
 
   final codeHosting = injector.get<CodeHostingService>();
-  final storage = injector.get<AppLocalStorageService>();
   final package = injector.get<PackageService>();
 
   final currentState = appState;
@@ -121,7 +123,6 @@ Future<void> _installAppIsolateAction((AppState, String, SendPort) record) async
         installReceivePort.send(appState.loading(app));
       })
       .flatMap(package.installApp)
-      .flatMap(storage.putApp)
       .pureError(currentState)
       .map(appState.installed)
       .fold(id, id);
@@ -161,4 +162,8 @@ final deleteAppAction = atomAction1<AppEntity>((set, app) async {
 void openApp(AppEntity app) {
   final package = injector.get<PackageService>();
   package.openApp(app);
+}
+
+List<AppModel> _mapAppsToModels(List<AppEntity> apps) {
+  return apps.map(AppModel.new).toList();
 }

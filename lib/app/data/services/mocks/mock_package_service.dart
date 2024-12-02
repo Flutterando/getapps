@@ -29,4 +29,9 @@ class MockPackageService implements PackageService {
   AsyncResult<List<AppEntity>, AppException> addInfos(List<AppEntity> apps) async {
     return Success(apps);
   }
+
+  @override
+  AsyncResult<Unit, AppException> checkInstallPermission() async {
+    return Success.unit();
+  }
 }
