@@ -1,5 +1,6 @@
 package com.example.android_package
 
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -13,7 +14,13 @@ import java.io.IOException
 import android.net.Uri
 import android.provider.Settings
 
-class APKInstaller(private val context: Context) {
+const val packageName = "com.example.android_package"
+var packageInstalledAction = "${packageName}.content.INSTALL_COMPLETE"
+class APKInstaller(private val context: Context, private var activity: Activity?) {
+
+    fun setActivity(activity: Activity?) {
+        this.activity = activity
+    }
 
     fun installAPK(apkFilePath: String): Boolean {
         return try {
@@ -70,8 +77,8 @@ class APKInstaller(private val context: Context) {
     }
 
     private fun commitSession(session: PackageInstaller.Session) {
-        val intent = Intent(context, context.javaClass)
-        intent.action = "com.example.android_package.INSTALL_COMPLETE"
+        val intent = Intent(context, (activity ?: context).javaClass)
+        intent.action = packageInstalledAction
 
         val pendingIntent = PendingIntent.getActivity(
             context,

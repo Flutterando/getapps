@@ -22,8 +22,8 @@ class MethodChannelAndroidPackage extends AndroidPackagePlatform {
 
   @override
   Future<bool> installApp(String apkFilePath) async {
-    final result = await methodChannel.invokeMethod<bool>('installApp', apkFilePath);
-    return result ?? false;
+    final result = await methodChannel.invokeMethod('installApp', apkFilePath);
+    return result == 0;
   }
 
   @override

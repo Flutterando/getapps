@@ -13,28 +13,37 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.FileProvider
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import java.io.File
 
-class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
+class AndroidPackagePlugin: FlutterPlugin, ActivityAware, MethodCallHandler{
 
   private lateinit var channel : MethodChannel
   private lateinit var applicationContext: Context
   private lateinit var installer: APKInstaller
+  private lateinit var listener: OnNewIntentListener
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "android_package")
     channel.setMethodCallHandler(this)
     applicationContext = flutterPluginBinding.applicationContext
-    installer = APKInstaller(applicationContext)
+    installer = APKInstaller(applicationContext, null)
   }
 
+  override fun onAttachedToActivity(activityPluginBinding: ActivityPluginBinding) {
+    installer.setActivity(activityPluginBinding.activity)
+    listener = OnNewIntentListener(activityPluginBinding.activity, null)
+    activityPluginBinding.addOnNewIntentListener(listener)
+  }
   override fun onMethodCall(call: MethodCall, result: Result) {
     if (call.method == "checkAndRequestInstallPermission") {
       result.success(installer.checkAndRequestInstallPermission())
     } else if (call.method == "openApp") {
       result.success(openAppByPackageId(call.arguments<String>()!!))
     } else if (call.method == "installApp") {
-      result.success(installer.installAPK(call.arguments<String>()!!))
+      listener.setResult(result)
+      installer.installAPK(call.arguments<String>()!!)
     } else if (call.method == "uninstallApp") {
       result.success(uninstallAppByPackageId(call.arguments<String>()!!))
     } else if (call.method == "getInfoById") {
@@ -50,10 +59,22 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
     }
   }
 
+  private fun getInstalledPackageNames(): List<String> {
+    val packageManager = applicationContext.packageManager
+    val installedPackages = packageManager.getInstalledPackages(0)
+    return installedPackages.map { it.packageName }
+  }
+
   private fun openAppByPackageId(packageId: String): Boolean {
+
+    //for (installedPackage in getInstalledPackageNames()) {
+      //Log.d("OpenApp", "Installed Package: $installedPackage")
+    //  }
+
     return try {
       val launchIntent: Intent? = applicationContext.packageManager.getLaunchIntentForPackage(packageId)
       if (launchIntent != null) {
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         applicationContext.startActivity(launchIntent)
         true
       } else {
@@ -109,13 +130,31 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
 
   private fun uninstallAppByPackageId(packageId: String): Boolean {
     return try {
+      val isInstalled = try {
+        val packageInfo = applicationContext.packageManager.getPackageInfo(packageId, 0)
+        Log.d("UninstallApp", "App found: ${packageInfo.packageName}")
+        true
+      } catch (e: PackageManager.NameNotFoundException) {
+        Log.e("UninstallApp", "App not found: $packageId")
+        false
+      }
+
+      if (!isInstalled) {
+        Log.e("UninstallApp", "App not installed: $packageId")
+        return false
+      }
+
       val uri = Uri.parse("package:$packageId")
       val intent = Intent(Intent.ACTION_DELETE, uri).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
       }
+      Log.d("UninstallApp", "Uninstall Intent Data: ${intent.data}")
+
       applicationContext.startActivity(intent)
+      Log.d("UninstallApp", "Uninstall process started for package: $packageId")
       true
     } catch (e: Exception) {
+      Log.e("UninstallApp", "Error uninstalling package $packageId: ${e.message}")
       e.printStackTrace()
       false
     }
@@ -146,4 +185,15 @@ class AndroidPackagePlugin: FlutterPlugin, MethodCallHandler {
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
+
+  override fun onDetachedFromActivity() {
+    installer.setActivity(null)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    TODO("Not yet implemented")
+  }
+  override fun onReattachedToActivityForConfigChanges(activityPluginBinding: ActivityPluginBinding) {
+  }
 }
+

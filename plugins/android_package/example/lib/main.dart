@@ -42,6 +42,29 @@ class _MyAppState extends State<MyApp> {
           children: [
             FloatingActionButton(
               onPressed: () async {
+                final info = await _androidPackagePlugin.openApp('br.com.flutterando.yuno');
+                print(info);
+              },
+              child: const Icon(Icons.open_in_new),
+            ),
+            FloatingActionButton(
+              onPressed: () async {
+                final tempDir = await pp.getTemporaryDirectory();
+                final file = File('${tempDir.path}/app-prod-release.apk');
+                final info = await _androidPackagePlugin.getAPKInfo(file.path);
+                print(info);
+              },
+              child: const Icon(Icons.check),
+            ),
+            FloatingActionButton(
+              onPressed: () async {
+                final info = await _androidPackagePlugin.getInfoById('br.com.flutterando.yuno');
+                print(info);
+              },
+              child: const Icon(Icons.info),
+            ),
+            FloatingActionButton(
+              onPressed: () async {
                 final info = await _androidPackagePlugin.uninstallApp('br.com.flutterando.yuno');
                 print(info);
               },
@@ -49,7 +72,9 @@ class _MyAppState extends State<MyApp> {
             ),
             FloatingActionButton(
               onPressed: () async {
-                if (!await _androidPackagePlugin.checkAndRequestInstallPermission()) {
+                final canInstall = await _androidPackagePlugin.checkAndRequestInstallPermission();
+                print(canInstall);
+                if (!canInstall) {
                   return;
                 }
 
