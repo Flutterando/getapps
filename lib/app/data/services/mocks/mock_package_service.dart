@@ -1,10 +1,27 @@
 import 'package:getapps/app/app.dart';
 
+import 'image_bytes.dart';
+
 class MockPackageService implements PackageService {
   @override
   AsyncResult<AppEntity, AppException> installApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return Success(app);
+    return Success(app.copyWith(
+      packageInfo: PackageInfoEntity(
+        id: 'br.com.flutterando.yuno',
+        name: 'My App',
+        version: '2.0.0',
+        imageBytes: facebookImageBytes,
+      ),
+      currentRelease: AppReleaseEntity(
+        tagName: 'c8duej',
+        assets: [],
+      ),
+      lastRelease: AppReleaseEntity(
+        tagName: 'c8duej',
+        assets: [],
+      ),
+    ));
   }
 
   @override
