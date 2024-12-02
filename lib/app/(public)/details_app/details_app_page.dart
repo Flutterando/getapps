@@ -110,7 +110,7 @@ class _DetailsAppPageState extends State<DetailsAppPage> {
                             ),
                           ),
                           child: Text(
-                            'Abir aplicativo',
+                            'Abrir aplicativo',
                             style: context.textTheme.labelLarge?.copyWith(
                               color: context.themeIsDark //
                                   ? context.colors.black
