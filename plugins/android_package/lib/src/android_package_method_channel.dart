@@ -4,9 +4,7 @@ import 'package:flutter/services.dart';
 import 'android_package_platform_interface.dart';
 import 'package_info.dart';
 
-/// An implementation of [AndroidPackagePlatform] that uses method channels.
 class MethodChannelAndroidPackage extends AndroidPackagePlatform {
-  /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('android_package');
 
@@ -46,5 +44,11 @@ class MethodChannelAndroidPackage extends AndroidPackagePlatform {
     }
 
     return PackageInfo.fromMap(result);
+  }
+
+  @override
+  Future<bool> checkAndRequestInstallPermission() async {
+    final result = await methodChannel.invokeMethod<bool>('checkAndRequestInstallPermission');
+    return result ?? false;
   }
 }

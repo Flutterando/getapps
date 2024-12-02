@@ -23,4 +23,8 @@ class AndroidPackage {
   Future<bool> installApp(String apkFilePath) {
     return AndroidPackagePlatform.instance.installApp(apkFilePath);
   }
+
+  Future<bool> checkAndRequestInstallPermission() {
+    return AndroidPackagePlatform.instance.checkAndRequestInstallPermission();
+  }
 }

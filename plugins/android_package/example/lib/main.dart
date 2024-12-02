@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:android_package/android_package.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart' as pp;
+import 'package:uno/uno.dart';
 
 void main() {
   runApp(const MyApp());
@@ -45,22 +49,30 @@ class _MyAppState extends State<MyApp> {
             ),
             FloatingActionButton(
               onPressed: () async {
-                // print('donwloaindg...');
-                // final response = await Uno().get(
-                //   'https://github.com/Flutterando/yuno/releases/download/build-24/app-prod-release.apk',
-                //   responseType: ResponseType.arraybuffer,
-                //   onDownloadProgress: (total, current) {
-                //     print('TOTAL: $total, CURRENT: $current');
-                //   },
-                // );
+                if (!await _androidPackagePlugin.checkAndRequestInstallPermission()) {
+                  return;
+                }
 
-                // print('DOWNLOADED!!');
+                final tempDir = await pp.getTemporaryDirectory();
+                final file = File('${tempDir.path}/app-prod-release.apk');
 
-                // final tempDir = await pp.getTemporaryDirectory();
-                // final file = File('${tempDir.path}/app-prod-release.apk');
-                // await file.writeAsBytes(response.data);
-                // print(file.path);
-                final info = await _androidPackagePlugin.installApp('/data/user/0/com.example.android_package_example/cache/app-prod-release.apk');
+                if (!file.existsSync()) {
+                  print('donwloaindg...');
+                  final response = await Uno().get(
+                    'https://github.com/Flutterando/yuno/releases/download/build-24/app-prod-release.apk',
+                    responseType: ResponseType.arraybuffer,
+                    onDownloadProgress: (total, current) {
+                      print('TOTAL: $total, CURRENT: $current');
+                    },
+                  );
+
+                  print('DOWNLOADED!!');
+
+                  await file.writeAsBytes(response.data);
+                }
+
+                print(file.path);
+                final info = await _androidPackagePlugin.installApp(file.path);
                 print(info);
               },
               child: const Icon(Icons.download),

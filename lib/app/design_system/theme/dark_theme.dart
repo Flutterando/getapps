@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getapps/app/(public)/home/home_page.dart';
 import 'package:getapps/app/design_system/design_system.dart';
 
 import 'app_colors.dart';
@@ -110,7 +109,7 @@ ThemeData get darkTheme {
       style: ButtonStyle(
         minimumSize: WidgetStateProperty.all(const Size(double.infinity, 48)),
         backgroundColor: WidgetStateProperty.all(colors.red),
-        padding:WidgetStateProperty.all( 14.0.paddingVertical),
+        padding: WidgetStateProperty.all(14.0.paddingVertical),
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18), // Definindo o borderRadius
