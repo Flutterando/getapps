@@ -77,6 +77,11 @@ void cancelInstallAppAction([bool force = true]) {
 }
 
 Future<void> installAppAction(AppModel appModel, String asset) async {
+  final canInstall = await checkInstallPersmission();
+  if (!canInstall) {
+    return;
+  }
+
   cancelInstallAppAction(true);
   final firstState = appModel.state;
 
