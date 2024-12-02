@@ -19,6 +19,8 @@ dependencies:
   uicons: ^1.0.1
   gap: ^3.0.1
   image: ^4.2.0
+  android_package:
+    path: plugins/android_package
   
 
 dev_dependencies:
