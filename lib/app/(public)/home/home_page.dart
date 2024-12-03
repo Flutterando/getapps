@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:getapps/app/(public)/home/widgets/sliver_highlight_card_skeleton.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
@@ -35,9 +34,9 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             onChanged: onChanged,
             onMyApp: () => Routefly.push(routePaths.myApps),
             onRegisterApp: () => Routefly.push(routePaths.registerApp),
+            onRemoveSearch: () => setSearchTextAction(''),
           ),
           const SliverGap(32),
-          if (favoriteApps.isEmpty) const SliverHighlightCardSkeleton(itemCount: 2),
           if (favoriteApps.isNotEmpty)
             SliverToBoxAdapter(
               child: Column(
@@ -55,6 +54,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                         final appModel = favoriteApps[index];
 
                         return AnimatedBuilder(
+                          key: ObjectKey(appModel),
                           animation: appModel,
                           builder: (context, child) {
                             final app = appModel.app;
@@ -109,12 +109,6 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           const SliverToBoxAdapter(
             child: TitleSectionHome(title: 'Meus apps'),
           ),
-
-          if (apps.isEmpty)
-            SliverPadding(
-              padding: 12.0.paddingHorizontal,
-              sliver: const SliverListAppTileSkeleton(childCount: 6),
-            ),
           if (apps.isNotEmpty)
             SliverPadding(
               padding: 12.0.paddingHorizontal,
@@ -124,6 +118,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                     final appModel = apps[index];
 
                     return AnimatedBuilder(
+                        key: ObjectKey(appModel),
                         animation: appModel,
                         builder: (context, child) {
                           final app = appModel.app;

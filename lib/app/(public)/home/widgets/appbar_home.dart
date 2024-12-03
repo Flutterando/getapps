@@ -3,17 +3,26 @@ import 'package:gap/gap.dart';
 import 'package:getapps/app/design_system/design_system.dart';
 import 'package:uicons/uicons.dart';
 
-class SliverAppbarHome extends StatelessWidget {
+class SliverAppbarHome extends StatefulWidget {
   const SliverAppbarHome({
     super.key,
     required this.onChanged,
     required this.onRegisterApp,
     required this.onMyApp,
+    required this.onRemoveSearch,
   });
 
   final ValueChanged<String> onChanged;
   final VoidCallback onRegisterApp;
   final VoidCallback onMyApp;
+  final VoidCallback onRemoveSearch;
+
+  @override
+  State<SliverAppbarHome> createState() => _SliverAppbarHomeState();
+}
+
+class _SliverAppbarHomeState extends State<SliverAppbarHome> {
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,25 +35,39 @@ class SliverAppbarHome extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Form(
-                  child: TextFormField(
-                    onChanged: onChanged,
-                    decoration: InputDecoration(
-                      hintText: 'Busca por nome do app',
-                      suffixIcon: Icon(UIcons.regularRounded.search),
+                child: TextFormField(
+                  controller: _controller,
+                  onChanged: widget.onChanged,
+                  decoration: InputDecoration(
+                    hintText: 'Busca por nome do app',
+                    suffixIcon: AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        if (_controller.text.isEmpty) {
+                          return Icon(UIcons.regularRounded.search);
+                        } else {
+                          return GestureDetector(
+                            onTap: () {
+                              _controller.clear();
+                              widget.onRemoveSearch();
+                            },
+                            child: Icon(UIcons.regularRounded.x),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),
               ),
               const Gap(12),
               IconButton(
-                onPressed: onRegisterApp,
+                onPressed: widget.onRegisterApp,
                 icon: Icon(UIcons.regularRounded.plus),
               ),
               const Gap(12),
               IconButton(
-                onPressed: onMyApp,
-                icon: Icon(UIcons.regularRounded.apps),
+                onPressed: widget.onMyApp,
+                icon: Icon(UIcons.regularRounded.settings_sliders),
               ),
             ],
           ),
@@ -60,8 +83,7 @@ class _PinnedHeaderDelegate extends SliverPersistentHeaderDelegate {
   _PinnedHeaderDelegate({required this.child});
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 
