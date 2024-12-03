@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with HookStateMixin {
   final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
-  late final _pageController = PageController(viewportFraction: 0.90);
 
   void onChanged(String value) {
     debounceSearch.call(() {
@@ -28,6 +27,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
     final favoriteApps = useAtomState(favoriteAppsState);
 
     final isFavoriteView = favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
+    final size = MediaQuery.sizeOf(context);
 
     return Scaffold(
         body: SafeArea(
@@ -53,59 +53,65 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                   const TitleSectionHome(title: 'Favoritos'),
                   SizedBox(
                     height: 120,
-                    child: PageView.builder(
+                    width: size.width,
+                    child: ListView.builder(
                       itemCount: favoriteApps.length,
-                      controller: _pageController,
+                      padding: const EdgeInsets.only(left: 12),
+                      shrinkWrap: true,
+                      physics: const PageScrollPhysics(),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         final appModel = favoriteApps[index];
 
-                        return AnimatedBuilder(
-                          key: ObjectKey(appModel),
-                          animation: appModel,
-                          builder: (context, child) {
-                            final app = appModel.app;
-                            late Widget buttonLabel;
+                        return SizedBox(
+                          width: 300,
+                          child: AnimatedBuilder(
+                            key: ObjectKey(appModel),
+                            animation: appModel,
+                            builder: (context, child) {
+                              final app = appModel.app;
+                              late Widget buttonLabel;
 
-                            if (app.appNotInstall) {
-                              buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
-                            } else if (app.updateIsAvailable) {
-                              buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
-                            } else {
-                              buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
-                            }
-                            return HighlightCard(
-                              title: app.appName,
-                              infoLabel: app.packageInfo.id,
-                              sizeLabel: app.packageInfo.version,
-                              imageBytes: appModel.app.packageInfo.imageBytes,
-                              onPressed: () => Routefly.push(
-                                routePaths.detailsApp,
-                                arguments: appModel,
-                              ),
-                              trailing: StatusAppButton(
-                                isLoading: appModel.isLoading,
-                                progress: appModel.downloadPercent,
-                                buttonLabel: buttonLabel,
-                                onTap: () {
-                                  if (app.appNotInstall || app.updateIsAvailable) {
-                                    installAppAction(appModel, '');
-                                  } else {
-                                    openApp(app);
-                                  }
-                                },
-                                onOptions: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) {
-                                      return Container();
-                                    },
-                                  );
-                                },
-                                onCancel: () => cancelInstallAppAction(),
-                              ),
-                            );
-                          },
+                              if (app.appNotInstall) {
+                                buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
+                              } else if (app.updateIsAvailable) {
+                                buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
+                              } else {
+                                buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
+                              }
+                              return HighlightCard(
+                                title: app.appName,
+                                infoLabel: app.packageInfo.id,
+                                sizeLabel: app.packageInfo.version,
+                                imageBytes: appModel.app.packageInfo.imageBytes,
+                                onPressed: () => Routefly.push(
+                                  routePaths.detailsApp,
+                                  arguments: appModel,
+                                ),
+                                trailing: StatusAppButton(
+                                  isLoading: appModel.isLoading,
+                                  progress: appModel.downloadPercent,
+                                  buttonLabel: buttonLabel,
+                                  onTap: () {
+                                    if (app.appNotInstall || app.updateIsAvailable) {
+                                      installAppAction(appModel, '');
+                                    } else {
+                                      openApp(app);
+                                    }
+                                  },
+                                  onOptions: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return Container();
+                                      },
+                                    );
+                                  },
+                                  onCancel: () => cancelInstallAppAction(),
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
