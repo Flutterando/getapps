@@ -36,7 +36,7 @@ class LoadingAppState extends AppState {
   const LoadingAppState(super.app);
 }
 
-class DownloadingAppState extends AppState {
+class DownloadingAppState extends LoadingAppState {
   final double percent;
 
   const DownloadingAppState(super.app, this.percent);
@@ -64,6 +64,9 @@ class AppModel extends ChangeNotifier {
   AppState _state;
   AppState get state => _state;
   AppEntity get app => _state.app;
+
+  bool get isLoading => _state is LoadingAppState;
+  double? get downloadPercent => _state is DownloadingAppState ? (_state as DownloadingAppState).percent : null;
 
   AppModel(AppEntity app) : _state = AppState.init(app);
 

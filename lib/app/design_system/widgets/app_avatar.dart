@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:getapps/app/core/functions/functions.dart';
-import 'package:getapps/app/design_system/design_system.dart';
 import 'package:uicons/uicons.dart';
 
 class AppAvatar extends StatefulWidget {
@@ -38,51 +36,59 @@ class AppAvatar extends StatefulWidget {
 }
 
 class _AppAvatarState extends State<AppAvatar> {
-  late Color _currentColor = const Color(0xff000000);
+  Uint8List? _imageBytes;
+  MemoryImage? _memoryImage;
+
+  bool get hasImage => widget.imageBytes != null && widget.imageBytes!.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    getColorApp();
+    if (hasImage) {
+      _imageBytes = Uint8List.fromList(widget.imageBytes!);
+      _memoryImage = MemoryImage(_imageBytes!);
+    }
   }
 
-  getColorApp() async {
-    if (widget.imageBytes != null && widget.imageBytes!.isNotEmpty) {
-      final color = (await getDominantColor(widget.imageBytes!)).color;
-      setState(() {
-        _currentColor = color;
-      });
+  @override
+  void didUpdateWidget(covariant AppAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!hasImage) {
+      _imageBytes = null;
+      _memoryImage = null;
+    } else if (widget.imageBytes?.length != oldWidget.imageBytes?.length) {
+      _imageBytes = Uint8List.fromList(widget.imageBytes!);
+      _memoryImage = MemoryImage(_imageBytes!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 96,
-      height: 96,
-      padding: 12.0.paddingAll,
-      decoration: BoxDecoration(
-        color: widget.imageBytes != null && widget.imageBytes!.isNotEmpty //
-            ? _currentColor
-            : context.themeIsDark //
-                ? context.colors.white
-                : context.colors.black,
-        borderRadius: BorderRadius.circular(24),
-        border: context.themeIsDark
-            ? Border.all(
-                color: const Color(0xff333333),
-                width: 1,
-              )
-            : null,
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      child: ClipOval(
+        key: ObjectKey(_memoryImage),
+        child: SizedBox(
+          width: widget.width,
+          height: widget.height,
+          child: hasImage
+              ? Image(
+                  image: _memoryImage!,
+                  fit: BoxFit.cover,
+                  gaplessPlayback: true,
+                )
+              : Container(
+                  color: Colors.black,
+                  child: Icon(UIcons.regularRounded.question, size: 32),
+                ),
+        ),
       ),
-      child: widget.imageBytes != null && widget.imageBytes!.isNotEmpty
-          ? Image.memory(
-              Uint8List.fromList(
-                widget.imageBytes!,
-              ),
-              fit: BoxFit.cover,
-            )
-          : Icon(UIcons.regularRounded.question, size: 32),
     );
   }
 }

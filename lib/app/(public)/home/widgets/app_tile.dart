@@ -9,6 +9,7 @@ class AppTile extends StatelessWidget {
     required this.sizeLabel,
     required this.onPressed,
     required this.isVertical,
+    this.trailing = const SizedBox(),
     this.imageBytes,
   });
 
@@ -18,6 +19,7 @@ class AppTile extends StatelessWidget {
     String? sizeLabel,
     required VoidCallback onPressed,
     List<int>? imageBytes,
+    Widget trailing = const SizedBox(),
   }) =>
       AppTile._(
         infoLabel: infoLabel,
@@ -26,6 +28,7 @@ class AppTile extends StatelessWidget {
         title: title,
         isVertical: true,
         imageBytes: imageBytes,
+        trailing: trailing,
       );
 
   factory AppTile.horizontal({
@@ -34,6 +37,7 @@ class AppTile extends StatelessWidget {
     required String sizeLabel,
     required VoidCallback onPressed,
     List<int>? imageBytes,
+    Widget trailing = const SizedBox(),
   }) =>
       AppTile._(
         infoLabel: infoLabel,
@@ -42,6 +46,7 @@ class AppTile extends StatelessWidget {
         title: title,
         isVertical: false,
         imageBytes: imageBytes,
+        trailing: trailing,
       );
 
   final String title;
@@ -49,6 +54,7 @@ class AppTile extends StatelessWidget {
   final String sizeLabel;
   final VoidCallback onPressed;
   final bool isVertical;
+  final Widget trailing;
   final List<int>? imageBytes;
 
   @override
@@ -56,49 +62,62 @@ class AppTile extends StatelessWidget {
     if (isVertical) {
       return GestureDetector(
         onTap: onPressed,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            AppAvatar.large(imageBytes: imageBytes),
-            const Gap(12),
-            Text(
-              title,
-              style: context.textTheme.labelLarge,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppAvatar.large(imageBytes: imageBytes),
+                const Gap(12),
+                Text(
+                  title,
+                  style: context.textTheme.labelLarge,
+                ),
+                Text(
+                  infoLabel,
+                  style: context.textTheme.labelMedium,
+                ),
+              ],
             ),
-            Text(
-              infoLabel,
-              style: context.textTheme.labelMedium,
-            ),
+            const Spacer(),
+            trailing,
           ],
         ),
       );
     }
 
-    return GestureDetector(
-      onTap: onPressed,
-      child: Row(
-        children: [
-          AppAvatar.medium(imageBytes: imageBytes),
-          const Gap(12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: context.textTheme.bodyMedium,
-              ),
-              Text(
-                infoLabel,
-                style: context.textTheme.labelMedium,
-              ),
-              Text(
-                sizeLabel,
-                style: context.textTheme.labelMedium,
-              ),
-            ],
-          )
-        ],
-      ),
+    return Row(
+      children: [
+        AppAvatar.medium(imageBytes: imageBytes),
+        const Gap(12),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.bodyMedium?.copyWith(fontSize: 18),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  infoLabel,
+                  style: context.textTheme.labelMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  sizeLabel,
+                  style: context.textTheme.labelMedium,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+        trailing,
+      ],
     );
   }
 }

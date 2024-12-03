@@ -11,6 +11,7 @@ class HighlightCard extends StatefulWidget {
     required this.infoLabel,
     required this.sizeLabel,
     required this.onPressed,
+    this.trailing = const SizedBox(),
     this.imageBytes,
     this.color = const Color(0xff000000),
   });
@@ -20,6 +21,7 @@ class HighlightCard extends StatefulWidget {
   final String sizeLabel;
   final VoidCallback onPressed;
   final Color color;
+  final Widget trailing;
   final List<int>? imageBytes;
 
   @override
@@ -38,7 +40,7 @@ class _HighlightCardState extends State<HighlightCard> {
     getColorApp();
   }
 
-  getColorApp() async {
+  void getColorApp() async {
     if (widget.imageBytes != null && widget.imageBytes!.isNotEmpty) {
       final domainColor = await getDominantColor(widget.imageBytes!);
       setState(() {
@@ -92,7 +94,8 @@ class _HighlightCardState extends State<HighlightCard> {
                                 ),
                               ],
                             ),
-                          )
+                          ),
+                          widget.trailing,
                         ],
                       ),
                     );
@@ -102,38 +105,43 @@ class _HighlightCardState extends State<HighlightCard> {
                   builder: (context) {
                     return Card(
                       color: _currentColor,
-                      child: Row(
+                      child: Stack(
                         children: [
-                          Container(
-                            padding: 8.0.paddingAll,
-                            width: constraints.maxWidth * 0.3,
-                            child: widget.imageBytes != null && widget.imageBytes!.isNotEmpty
-                                ? Image.memory(
-                                    Uint8List.fromList(widget.imageBytes!),
-                                    fit: BoxFit.cover,
-                                  )
-                                : Icon(UIcons.regularRounded.question, size: 32),
+                          Row(
+                            children: [
+                              Container(
+                                padding: 8.0.paddingAll,
+                                width: constraints.maxWidth * 0.3,
+                                child: AppAvatar.medium(imageBytes: widget.imageBytes),
+                              ),
+                              Container(
+                                padding: 8.0.paddingLeft,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      widget.title,
+                                      style: context.textTheme.headlineLarge,
+                                    ),
+                                    Text(
+                                      widget.infoLabel,
+                                      style: context.textTheme.labelMedium,
+                                    ),
+                                    Text(
+                                      widget.sizeLabel,
+                                      style: context.textTheme.labelMedium,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: 12.0.paddingLeft,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.title,
-                                  style: context.textTheme.headlineLarge,
-                                ),
-                                Text(
-                                  widget.infoLabel,
-                                  style: context.textTheme.labelMedium,
-                                ),
-                                Text(
-                                  widget.sizeLabel,
-                                  style: context.textTheme.labelMedium,
-                                ),
-                              ],
-                            ),
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: widget.trailing,
                           ),
                         ],
                       ),
