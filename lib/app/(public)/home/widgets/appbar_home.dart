@@ -25,6 +25,12 @@ class _SliverAppbarHomeState extends State<SliverAppbarHome> {
   final _controller = TextEditingController();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       floating: true,
@@ -36,6 +42,7 @@ class _SliverAppbarHomeState extends State<SliverAppbarHome> {
             children: [
               Expanded(
                 child: TextFormField(
+                  autofocus: false,
                   controller: _controller,
                   onChanged: widget.onChanged,
                   decoration: InputDecoration(

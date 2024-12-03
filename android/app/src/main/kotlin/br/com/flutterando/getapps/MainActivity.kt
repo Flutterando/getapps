@@ -1,4 +1,4 @@
-package com.example.getapps
+package br.com.flutterando.getapps
 
 import io.flutter.embedding.android.FlutterActivity
 
