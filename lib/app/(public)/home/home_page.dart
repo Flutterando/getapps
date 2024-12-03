@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
     final apps = useAtomState(filteredAppsState);
     final favoriteApps = useAtomState(favoriteAppsState);
 
+    final isFavoriteView = favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
+
     return Scaffold(
         body: SafeArea(
       child: CustomScrollView(
@@ -36,13 +38,16 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             onRegisterApp: () => Routefly.push(routePaths.registerApp),
             onRemoveSearch: () => setSearchTextAction(''),
           ),
-          const SliverGap(32),
-          if (favoriteApps.isNotEmpty)
-            SliverToBoxAdapter(
+          SliverToBoxAdapter(
+            child: AnimatedAlign(
+              alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
+              heightFactor: isFavoriteView ? 1 : 0,
+              duration: const Duration(milliseconds: 500),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Gap(32),
                   const TitleSectionHome(title: 'Favoritos'),
                   SizedBox(
                     height: 120,
@@ -76,6 +81,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                 ],
               ),
             ),
+          ),
           const SliverGap(32),
           // Validar se faz sentido manter isso
           // SliverToBoxAdapter(
