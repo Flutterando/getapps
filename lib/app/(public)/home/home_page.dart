@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           SliverToBoxAdapter(
             child: AnimatedAlign(
               alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
+              curve: Curves.easeOut,
               heightFactor: isFavoriteView ? 1 : 0,
               duration: const Duration(milliseconds: 500),
               child: Column(
@@ -115,38 +116,9 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           const SliverToBoxAdapter(
             child: TitleSectionHome(title: 'Meus apps'),
           ),
-          if (apps.isNotEmpty)
-            SliverPadding(
-              padding: 12.0.paddingHorizontal,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                    final appModel = apps[index];
-
-                    return AnimatedBuilder(
-                        key: ObjectKey(appModel),
-                        animation: appModel,
-                        builder: (context, child) {
-                          final app = appModel.app;
-                          return Container(
-                            margin: 16.0.paddingBottom,
-                            child: AppTile.horizontal(
-                              onPressed: () => Routefly.push(
-                                routePaths.detailsApp,
-                                arguments: appModel,
-                              ),
-                              imageBytes: app.packageInfo.imageBytes,
-                              title: app.appName,
-                              infoLabel: app.packageInfo.id,
-                              sizeLabel: app.packageInfo.version,
-                            ),
-                          );
-                        });
-                  },
-                  childCount: apps.length,
-                ),
-              ),
-            ),
+          SliverToBoxAdapter(
+            child: AnimatedAppsList(models: apps),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: 32.0.paddingTop + 24.0.paddingBottom,
@@ -158,6 +130,67 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
         ],
       ),
     ));
+  }
+}
+
+class AnimatedAppsList extends StatelessWidget {
+  final List<AppModel> models;
+  const AnimatedAppsList({super.key, required this.models});
+
+  Widget _buildItem(List<AppModel> apps) {
+    return apps.isEmpty
+        ? const SizedBox()
+        : Padding(
+            key: ObjectKey(models),
+            padding: 12.0.paddingHorizontal,
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final appModel = apps[index];
+
+                return AnimatedBuilder(
+                  key: ObjectKey(appModel),
+                  animation: appModel,
+                  builder: (context, child) {
+                    final app = appModel.app;
+                    return Container(
+                      margin: 16.0.paddingBottom,
+                      child: AppTile.horizontal(
+                        onPressed: () => Routefly.push(
+                          routePaths.detailsApp,
+                          arguments: appModel,
+                        ),
+                        imageBytes: app.packageInfo.imageBytes,
+                        title: app.appName,
+                        infoLabel: app.packageInfo.id,
+                        sizeLabel: app.packageInfo.version,
+                      ),
+                    );
+                  },
+                );
+              },
+              itemCount: apps.length,
+            ),
+          );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: _buildItem(models),
+      ),
+    );
   }
 }
 
