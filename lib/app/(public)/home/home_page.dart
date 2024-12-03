@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/(public)/home/widgets/sliver_highlight_card_skeleton.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
@@ -17,58 +16,59 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
   final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
   late final _pageController = PageController(viewportFraction: 0.90);
 
-  @override
-  void initState() {
-    super.initState();
-
-    fetchAppsActions();
+  void onChanged(String value) {
+    debounceSearch.call(() {
+      setSearchTextAction(value);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final apps = useAtomState(appsState);
+    final apps = useAtomState(filteredAppsState);
+    final favoriteApps = useAtomState(favoriteAppsState);
 
     return Scaffold(
         body: SafeArea(
       child: CustomScrollView(
         slivers: [
           SliverAppbarHome(
-            onChanged: (value) {
-              debounceSearch.call(() {
-                print("search: $value");
-              });
-            },
+            onChanged: onChanged,
             onMyApp: () => Routefly.push(routePaths.myApps),
             onRegisterApp: () => Routefly.push(routePaths.registerApp),
           ),
           const SliverGap(32),
-          if (apps.isEmpty)
-            const SliverHighlightCardSkeleton(itemCount: 2),
-          if (apps.isNotEmpty)
+          if (favoriteApps.isEmpty) const SliverHighlightCardSkeleton(itemCount: 2),
+          if (favoriteApps.isNotEmpty)
             SliverToBoxAdapter(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TitleSectionHome(title: 'Destaques da semana'),
+                  const TitleSectionHome(title: 'Favoritos'),
                   SizedBox(
-                    height: context.screenHeight * 0.15,
+                    height: 120,
                     child: PageView.builder(
-                      itemCount: apps.length,
+                      itemCount: favoriteApps.length,
                       controller: _pageController,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        final appModel = apps[index];
+                        final appModel = favoriteApps[index];
 
-                        return HighlightCard(
-                          title: appModel.app.appName,
-                          infoLabel: 'github',
-                          sizeLabel: 'Flutterando',
-                          imageBytes: appModel.app.packageInfo.imageBytes,
-                          onPressed: () => Routefly.push(
-                            routePaths.detailsApp,
-                            arguments: appModel,
-                          ),
+                        return AnimatedBuilder(
+                          animation: appModel,
+                          builder: (context, child) {
+                            final app = appModel.app;
+                            return HighlightCard(
+                              title: app.appName,
+                              infoLabel: app.packageInfo.id,
+                              sizeLabel: app.packageInfo.version,
+                              imageBytes: appModel.app.packageInfo.imageBytes,
+                              onPressed: () => Routefly.push(
+                                routePaths.detailsApp,
+                                arguments: appModel,
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -107,8 +107,9 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           // ),
           // const SliverGap(30),
           const SliverToBoxAdapter(
-            child: TitleSectionHome(title: 'Outros apps'),
+            child: TitleSectionHome(title: 'Meus apps'),
           ),
+
           if (apps.isEmpty)
             SliverPadding(
               padding: 12.0.paddingHorizontal,
@@ -122,19 +123,24 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                   (BuildContext context, int index) {
                     final appModel = apps[index];
 
-                    return Container(
-                      margin: 16.0.paddingBottom,
-                      child: AppTile.horizontal(
-                        onPressed: () => Routefly.push(
-                          routePaths.detailsApp,
-                          arguments: appModel,
-                        ),
-                        imageBytes: appModel.app.packageInfo.imageBytes,
-                        title: appModel.app.appName,
-                        infoLabel: appModel.app.repository.organizationName,
-                        sizeLabel: appModel.app.repository.provider.name,
-                      ),
-                    );
+                    return AnimatedBuilder(
+                        animation: appModel,
+                        builder: (context, child) {
+                          final app = appModel.app;
+                          return Container(
+                            margin: 16.0.paddingBottom,
+                            child: AppTile.horizontal(
+                              onPressed: () => Routefly.push(
+                                routePaths.detailsApp,
+                                arguments: appModel,
+                              ),
+                              imageBytes: app.packageInfo.imageBytes,
+                              title: app.appName,
+                              infoLabel: app.packageInfo.id,
+                              sizeLabel: app.packageInfo.version,
+                            ),
+                          );
+                        });
                   },
                   childCount: apps.length,
                 ),
@@ -143,17 +149,26 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
           SliverToBoxAdapter(
             child: Padding(
               padding: 32.0.paddingTop + 24.0.paddingBottom,
-              child: Center(
-                child: Text(
-                  'Versão 1.1.001',
-                  style: context.textTheme.labelLarge
-                      ?.copyWith(color: const Color(0xff939AA5)),
-                ),
+              child: const Center(
+                child: VersionWidget(),
               ),
             ),
           )
         ],
       ),
     ));
+  }
+}
+
+class VersionWidget extends StatelessWidget with HookMixin {
+  const VersionWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final version = useAtomState(appVersionState);
+    return Text(
+      'Versão $version',
+      style: context.textTheme.labelLarge?.copyWith(color: const Color(0xff939AA5)),
+    );
   }
 }

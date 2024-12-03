@@ -100,3 +100,31 @@ final myAppsState = selector((get) {
 
   return apps.where((state) => !state.app.appNotInstall).toList();
 });
+
+final appVersionState = atom<String>('0.0.0');
+
+final searchTextState = atom<String>('');
+
+final filteredAppsState = selector((get) {
+  final searchText = get(searchTextState);
+  final apps = get(appsState);
+
+  if (searchText.isEmpty) {
+    return apps;
+  }
+
+  return apps.where((model) {
+    final entity = model.app;
+    final byName = entity.appName.toLowerCase().contains(searchText.toLowerCase());
+    final byPackageId = entity.packageInfo.id.toLowerCase().contains(searchText.toLowerCase());
+    return byName || byPackageId;
+  }).toList();
+});
+
+final favoriteAppsState = selector((get) {
+  final apps = get(appsState);
+
+  return apps.where((state) {
+    return state.app.favorite && !state.app.appNotInstall;
+  }).toList();
+});

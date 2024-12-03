@@ -4,6 +4,7 @@ import 'image_bytes.dart';
 
 final _apps = <AppEntity>[
   AppEntity(
+    favorite: true,
     repository: RepositoryEntity(
       organizationName: 'Flutterando',
       projectName: 'yuno',
@@ -25,6 +26,7 @@ final _apps = <AppEntity>[
     ),
   ),
   AppEntity(
+    favorite: true,
     repository: RepositoryEntity(
       organizationName: 'Flutterando',
       projectName: 'playflix',

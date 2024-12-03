@@ -3,14 +3,28 @@ import 'dart:isolate';
 
 import '../../app.dart';
 
+final setSearchTextAction = atomAction1<String>((set, text) {
+  set(searchTextState, text);
+});
+
+final fetchAppVersionAction = atomAction((set) {
+  final model = appsState.state.firstWhere((model) {
+    return model.app.packageInfo.id == 'br.com.flutterando.getapps';
+  });
+  set(appVersionState, model.app.packageInfo.version);
+});
+
 final fetchAppsActions = atomAction((set) async {
   set(baseLoadingState, true);
   set(baseExceptionState, null);
 
   final storage = injector.get<AppLocalStorageService>();
   final package = injector.get<PackageService>();
+  final getAppsEntity = AppEntity.getAppsEntity();
+
   await storage
       .fetchApps() //
+      .map((apps) => apps..insert(0, getAppsEntity))
       .flatMap(package.addInfos)
       .map(_mapAppsToModels)
       .updateState(appsState, set);

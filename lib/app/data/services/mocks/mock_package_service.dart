@@ -8,7 +8,7 @@ class MockPackageService implements PackageService {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app.copyWith(
       packageInfo: PackageInfoEntity(
-        id: 'br.com.flutterando.yuno',
+        id: 'my.com.app.test',
         name: 'My App',
         version: '2.0.0',
         imageBytes: facebookImageBytes,
@@ -27,7 +27,14 @@ class MockPackageService implements PackageService {
   @override
   AsyncResult<AppEntity, AppException> addInfo(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return Success(app);
+    return Success(app.copyWith(
+      packageInfo: PackageInfoEntity(
+        id: 'my.com.app.test',
+        name: 'My App',
+        version: '2.0.0',
+        imageBytes: facebookImageBytes,
+      ),
+    ));
   }
 
   @override

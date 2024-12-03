@@ -13,6 +13,13 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
 
+    Future.any([
+      Future.value(fetchAppsActions()).then((_) => fetchAppVersionAction()),
+      Future.delayed(const Duration(milliseconds: 2000)),
+    ]).then((_) {
+      Routefly.navigate(routePaths.home);
+    });
+
     Future.delayed(const Duration(milliseconds: 800)).then((_) {
       Routefly.navigate(routePaths.home);
     });

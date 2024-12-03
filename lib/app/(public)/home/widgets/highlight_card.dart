@@ -65,14 +65,12 @@ class _HighlightCardState extends State<HighlightCard> {
                           Container(
                             padding: 8.0.paddingAll,
                             width: constraints.maxWidth * 0.3,
-                            child: widget.imageBytes != null &&
-                                    widget.imageBytes!.isNotEmpty
+                            child: widget.imageBytes != null && widget.imageBytes!.isNotEmpty
                                 ? Image.memory(
                                     Uint8List.fromList(widget.imageBytes!),
                                     fit: BoxFit.cover,
                                   )
-                                : Icon(UIcons.regularRounded.question,
-                                    size: 32),
+                                : Icon(UIcons.regularRounded.question, size: 32),
                           ),
                           Container(
                             padding: 12.0.paddingLeft,
@@ -109,14 +107,12 @@ class _HighlightCardState extends State<HighlightCard> {
                           Container(
                             padding: 8.0.paddingAll,
                             width: constraints.maxWidth * 0.3,
-                            child: widget.imageBytes != null &&
-                                    widget.imageBytes!.isNotEmpty
+                            child: widget.imageBytes != null && widget.imageBytes!.isNotEmpty
                                 ? Image.memory(
                                     Uint8List.fromList(widget.imageBytes!),
                                     fit: BoxFit.cover,
                                   )
-                                : Icon(UIcons.regularRounded.question,
-                                    size: 32),
+                                : Icon(UIcons.regularRounded.question, size: 32),
                           ),
                           Container(
                             padding: 12.0.paddingLeft,

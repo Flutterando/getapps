@@ -9,6 +9,7 @@ class AppEntity {
   final AppReleaseEntity lastRelease;
   final AppReleaseEntity currentRelease;
   final File? file;
+  final bool favorite;
 
   AppEntity({
     required this.packageInfo,
@@ -16,6 +17,7 @@ class AppEntity {
     required this.lastRelease,
     required this.currentRelease,
     this.file,
+    this.favorite = false,
   });
 
   bool get appNotInstall => packageInfo is EmptyPackageInfoEntity;
@@ -31,11 +33,29 @@ class AppEntity {
     );
   }
 
+  static AppEntity getAppsEntity() {
+    return AppEntity(
+      repository: RepositoryEntity(
+        provider: GitRepositoryProvider.github,
+        organizationName: 'Flutterando',
+        projectName: 'getapps',
+      ),
+      packageInfo: PackageInfoEntity(
+        id: 'br.com.flutterando.getapps',
+        version: '1.0.0',
+        imageBytes: [],
+      ),
+      lastRelease: AppReleaseEntity.empty(),
+      currentRelease: AppReleaseEntity.empty(),
+    );
+  }
+
   AppEntity copyWith({
     PackageInfoEntity? packageInfo,
     RepositoryEntity? repository,
     AppReleaseEntity? lastRelease,
     AppReleaseEntity? currentRelease,
+    bool? favorite,
     File? file,
   }) {
     return AppEntity(
@@ -44,6 +64,7 @@ class AppEntity {
       lastRelease: lastRelease ?? this.lastRelease,
       currentRelease: currentRelease ?? this.currentRelease,
       file: file ?? this.file,
+      favorite: favorite ?? this.favorite,
     );
   }
 }
