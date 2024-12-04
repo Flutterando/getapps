@@ -19,7 +19,6 @@ class SliverListAppTileSkeleton extends StatelessWidget {
           return Container(
             margin: 16.0.paddingBottom,
             child: AppTile.horizontal(
-              onPressed: () {},
               title: '',
               infoLabel: '',
               sizeLabel: '',

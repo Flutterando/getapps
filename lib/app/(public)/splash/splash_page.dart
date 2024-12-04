@@ -19,10 +19,6 @@ class _SplashPageState extends State<SplashPage> {
     ]).then((_) {
       Routefly.navigate(routePaths.home);
     });
-
-    Future.delayed(const Duration(milliseconds: 800)).then((_) {
-      Routefly.navigate(routePaths.home);
-    });
   }
 
   @override

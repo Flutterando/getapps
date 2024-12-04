@@ -7,7 +7,6 @@ class AppTile extends StatelessWidget {
     required this.title,
     required this.infoLabel,
     required this.sizeLabel,
-    required this.onPressed,
     required this.isVertical,
     this.trailing = const SizedBox(),
     this.imageBytes,
@@ -24,7 +23,6 @@ class AppTile extends StatelessWidget {
       AppTile._(
         infoLabel: infoLabel,
         sizeLabel: sizeLabel ?? '',
-        onPressed: onPressed,
         title: title,
         isVertical: true,
         imageBytes: imageBytes,
@@ -35,14 +33,12 @@ class AppTile extends StatelessWidget {
     required String title,
     required String infoLabel,
     required String sizeLabel,
-    required VoidCallback onPressed,
     List<int>? imageBytes,
     Widget trailing = const SizedBox(),
   }) =>
       AppTile._(
         infoLabel: infoLabel,
         sizeLabel: sizeLabel,
-        onPressed: onPressed,
         title: title,
         isVertical: false,
         imageBytes: imageBytes,
@@ -52,7 +48,6 @@ class AppTile extends StatelessWidget {
   final String title;
   final String infoLabel;
   final String sizeLabel;
-  final VoidCallback onPressed;
   final bool isVertical;
   final Widget trailing;
   final List<int>? imageBytes;
@@ -60,34 +55,32 @@ class AppTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isVertical) {
-      return GestureDetector(
-        onTap: onPressed,
-        child: Row(
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppAvatar.large(imageBytes: imageBytes),
-                const Gap(12),
-                Text(
-                  title,
-                  style: context.textTheme.labelLarge,
-                ),
-                Text(
-                  infoLabel,
-                  style: context.textTheme.labelMedium,
-                ),
-              ],
-            ),
-            const Spacer(),
-            trailing,
-          ],
-        ),
+      return Row(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppAvatar.large(imageBytes: imageBytes),
+              const Gap(12),
+              Text(
+                title,
+                style: context.textTheme.labelLarge,
+              ),
+              Text(
+                infoLabel,
+                style: context.textTheme.labelMedium,
+              ),
+            ],
+          ),
+          const Spacer(),
+          trailing,
+        ],
       );
     }
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         AppAvatar.medium(imageBytes: imageBytes),
         const Gap(12),
@@ -96,6 +89,7 @@ class AppTile extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   title,

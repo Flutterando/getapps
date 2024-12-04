@@ -7,4 +7,5 @@ abstract interface class CodeHostingService {
     String asset,
     void Function(double percent) onProgress,
   );
+  Future<void> openRepository(AppEntity app);
 }

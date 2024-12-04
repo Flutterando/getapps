@@ -21,6 +21,7 @@ dependencies:
   image: ^4.2.0
   android_package:
     path: plugins/android_package
+  url_launcher: ^6.3.1
   
 
 dev_dependencies:

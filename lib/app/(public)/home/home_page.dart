@@ -14,6 +14,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with HookStateMixin {
   final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
+  final _keyRefreshTop = GlobalKey<RefreshIndicatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _keyRefreshTop.currentState?.show();
+    });
+  }
 
   void onChanged(String value) {
     debounceSearch.call(() {
@@ -28,114 +37,117 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
 
     final isFavoriteView = favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
     final size = MediaQuery.sizeOf(context);
+    final primary = Theme.of(context).colors.red;
 
     return Scaffold(
         body: SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverAppbarHome(
-            onChanged: onChanged,
-            onMyApp: () => Routefly.push(routePaths.myApps),
-            onRegisterApp: () => Routefly.push(routePaths.registerApp),
-            onRemoveSearch: () => setSearchTextAction(''),
-          ),
-          SliverToBoxAdapter(
-            child: AnimatedAlign(
-              alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
-              curve: Curves.easeOut,
-              heightFactor: isFavoriteView ? 1 : 0,
-              duration: const Duration(milliseconds: 500),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Gap(32),
-                  const TitleSectionHome(title: 'Favoritos'),
-                  SizedBox(
-                    height: 120,
-                    width: size.width,
-                    child: ListView.builder(
-                      itemCount: favoriteApps.length,
-                      padding: const EdgeInsets.only(left: 12),
-                      shrinkWrap: true,
-                      physics: const PageScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final appModel = favoriteApps[index];
+      child: RefreshIndicator(
+        key: _keyRefreshTop,
+        color: primary,
+        onRefresh: () {
+          return Future.value(checkUpdatesActions(appsState.state));
+        },
+        child: CustomScrollView(
+          slivers: [
+            SliverAppbarHome(
+              onChanged: onChanged,
+              onMyApp: () => Routefly.push(routePaths.myApps),
+              onRegisterApp: () => Routefly.push(routePaths.registerApp),
+              onRemoveSearch: () => setSearchTextAction(''),
+            ),
+            SliverToBoxAdapter(
+              child: AnimatedAlign(
+                alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
+                curve: Curves.easeOut,
+                heightFactor: isFavoriteView ? 1 : 0,
+                duration: const Duration(milliseconds: 500),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Gap(32),
+                    const TitleSectionHome(title: 'Favoritos'),
+                    SizedBox(
+                      height: 120,
+                      width: size.width,
+                      child: ListView.builder(
+                        itemCount: favoriteApps.length,
+                        padding: const EdgeInsets.only(left: 12),
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final appModel = favoriteApps[index];
 
-                        return SizedBox(
-                          width: 300,
-                          child: AnimatedBuilder(
-                            key: ObjectKey(appModel),
-                            animation: appModel,
-                            builder: (context, child) {
-                              final app = appModel.app;
-                              late Widget buttonLabel;
+                          return SizedBox(
+                            width: 300,
+                            child: AnimatedBuilder(
+                              key: ObjectKey(appModel),
+                              animation: appModel,
+                              builder: (context, child) {
+                                final app = appModel.app;
+                                late Widget buttonLabel;
 
-                              if (app.appNotInstall) {
-                                buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
-                              } else if (app.updateIsAvailable) {
-                                buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
-                              } else {
-                                buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
-                              }
-                              return HighlightCard(
-                                title: app.appName,
-                                infoLabel: app.packageInfo.id,
-                                sizeLabel: app.packageInfo.version,
-                                imageBytes: appModel.app.packageInfo.imageBytes,
-                                onPressed: () => Routefly.push(
-                                  routePaths.detailsApp,
-                                  arguments: appModel,
-                                ),
-                                trailing: StatusAppButton(
-                                  isLoading: appModel.isLoading,
-                                  progress: appModel.downloadPercent,
-                                  buttonLabel: buttonLabel,
-                                  onTap: () {
-                                    if (app.appNotInstall || app.updateIsAvailable) {
-                                      installAppAction(appModel, '');
-                                    } else {
-                                      openApp(app);
-                                    }
-                                  },
-                                  onOptions: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        return Container();
-                                      },
-                                    );
-                                  },
-                                  onCancel: () => cancelInstallAppAction(),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
+                                if (app.appNotInstall) {
+                                  buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
+                                } else if (app.updateIsAvailable) {
+                                  buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
+                                } else {
+                                  buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
+                                }
+                                return HighlightCard(
+                                  title: app.appName,
+                                  infoLabel: app.packageInfo.id,
+                                  sizeLabel: app.packageInfo.version,
+                                  imageBytes: appModel.app.packageInfo.imageBytes,
+                                  trailing: StatusAppButton(
+                                    isLoading: appModel.isLoading,
+                                    progress: appModel.downloadPercent,
+                                    buttonLabel: buttonLabel,
+                                    onTap: () {
+                                      if (app.appNotInstall || app.updateIsAvailable) {
+                                        installAppAction(appModel, '');
+                                      } else {
+                                        openApp(app);
+                                      }
+                                    },
+                                    onOptions: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return AppDetailModalWidget(appModel: appModel);
+                                        },
+                                      );
+                                    },
+                                    onCancel: () => cancelInstallAppAction(),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          const SliverGap(32),
-          const SliverToBoxAdapter(
-            child: TitleSectionHome(title: 'Meus apps'),
-          ),
-          SliverToBoxAdapter(
-            child: AnimatedAppsList(models: apps),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: 32.0.paddingTop + 24.0.paddingBottom,
-              child: const Center(
-                child: VersionWidget(),
-              ),
+            const SliverGap(32),
+            const SliverToBoxAdapter(
+              child: TitleSectionHome(title: 'Meus apps'),
             ),
-          )
-        ],
+            SliverToBoxAdapter(
+              child: AnimatedAppsList(models: apps),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: 32.0.paddingTop + 24.0.paddingBottom,
+                child: const Center(
+                  child: VersionWidget(),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     ));
   }
@@ -151,64 +163,80 @@ class AnimatedAppsList extends StatelessWidget {
         : Padding(
             key: ObjectKey(models),
             padding: 12.0.paddingHorizontal,
-            child: ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final appModel = apps[index];
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                double itemHeight = 100;
+                double itemWidth = 300;
+                int crossAxisCount = (constraints.maxWidth / itemWidth).floor();
+                final aspect = (constraints.maxWidth / crossAxisCount) / itemHeight;
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: aspect,
+                  ),
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    final appModel = apps[index];
 
-                return AnimatedBuilder(
-                  key: ObjectKey(appModel),
-                  animation: appModel,
-                  builder: (context, child) {
-                    final app = appModel.app;
-                    late Widget buttonLabel;
+                    return AnimatedBuilder(
+                      key: ObjectKey(appModel),
+                      animation: appModel,
+                      builder: (context, child) {
+                        final app = appModel.app;
+                        late Widget buttonLabel;
 
-                    if (app.appNotInstall) {
-                      buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
-                    } else if (app.updateIsAvailable) {
-                      buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
-                    } else {
-                      buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
-                    }
-                    return Container(
-                      margin: 16.0.paddingBottom,
-                      child: AppTile.horizontal(
-                        onPressed: () => Routefly.push(
-                          routePaths.detailsApp,
-                          arguments: appModel,
-                        ),
-                        imageBytes: app.packageInfo.imageBytes,
-                        title: app.appName,
-                        infoLabel: app.packageInfo.id,
-                        sizeLabel: app.packageInfo.version,
-                        trailing: StatusAppButton(
-                          isLoading: appModel.isLoading,
-                          progress: appModel.downloadPercent,
-                          buttonLabel: buttonLabel,
-                          onTap: () {
-                            if (app.appNotInstall || app.updateIsAvailable) {
-                              installAppAction(appModel, '');
-                            } else {
-                              openApp(app);
-                            }
-                          },
-                          onOptions: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return Container();
-                              },
-                            );
-                          },
-                          onCancel: () => cancelInstallAppAction(),
-                        ),
-                      ),
+                        if (app.appNotInstall) {
+                          buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
+                        } else if (app.updateIsAvailable) {
+                          buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
+                        } else {
+                          buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
+                        }
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.grey[200]!),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: AppTile.horizontal(
+                              imageBytes: app.packageInfo.imageBytes,
+                              title: app.appName,
+                              infoLabel: app.packageInfo.id,
+                              sizeLabel: app.packageInfo.version,
+                              trailing: StatusAppButton(
+                                isLoading: appModel.isLoading,
+                                progress: appModel.downloadPercent,
+                                buttonLabel: buttonLabel,
+                                onTap: () {
+                                  if (app.appNotInstall || app.updateIsAvailable) {
+                                    installAppAction(appModel, '');
+                                  } else {
+                                    openApp(app);
+                                  }
+                                },
+                                onOptions: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return AppDetailModalWidget(appModel: appModel);
+                                    },
+                                  );
+                                },
+                                onCancel: () => cancelInstallAppAction(),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
+                  itemCount: apps.length,
                 );
               },
-              itemCount: apps.length,
             ),
           );
   }
@@ -240,19 +268,97 @@ Widget _buildButtonLabel(String label, IconData icon) {
       const Gap(6),
       Icon(
         icon,
-        color: Colors.grey,
+        color: Colors.grey[700],
         size: 12,
       ),
       const Gap(6),
       Text(
         label,
-        style: const TextStyle(
-          color: Colors.grey,
+        style: TextStyle(
+          color: Colors.grey[700],
           fontSize: 12,
         ),
       ),
     ],
   );
+}
+
+class AppDetailModalWidget extends StatelessWidget with HookMixin {
+  final AppModel appModel;
+
+  const AppDetailModalWidget({super.key, required this.appModel});
+
+  @override
+  Widget build(BuildContext context) {
+    useListenable(appModel);
+    final primary = Theme.of(context).colors.red;
+    return Padding(
+      padding: 16.0.paddingHorizontal,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Gap(16),
+          AppTile.horizontal(
+            title: appModel.app.appName,
+            infoLabel: appModel.app.packageInfo.id,
+            sizeLabel: appModel.app.packageInfo.version,
+            imageBytes: appModel.app.packageInfo.imageBytes,
+            trailing: appModel.app.appNotInstall
+                ? const SizedBox()
+                : Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        favoriteAppAction(appModel);
+                      },
+                      child: Icon(
+                        appModel.app.favorite ? Icons.favorite : Icons.favorite_border,
+                        color: primary,
+                        size: 35,
+                      ),
+                    ),
+                  ),
+          ),
+          const Gap(30),
+          ElevatedButton(
+            onPressed: () {
+              openRepository(appModel);
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'Abrir Repositório',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const Gap(16),
+          if (appModel.app.appNotInstall)
+            ElevatedButton(
+              onPressed: () {
+                installAppAction(appModel, '');
+                Navigator.pop(context);
+              },
+              child: const Text('Instalar', style: TextStyle(color: Colors.white)),
+            ),
+          if (appModel.app.updateIsAvailable)
+            ElevatedButton(
+              onPressed: () {
+                installAppAction(appModel, '');
+                Navigator.pop(context);
+              },
+              child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
+            ),
+          if (!appModel.app.appNotInstall && !appModel.app.updateIsAvailable)
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                openApp(appModel.app);
+              },
+              child: const Text('Abrir', style: TextStyle(color: Colors.white)),
+            ),
+          const Gap(48),
+        ],
+      ),
+    );
+  }
 }
 
 class VersionWidget extends StatelessWidget with HookMixin {
@@ -346,6 +452,8 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     useListenable(_controller);
+    final backgroundColor = Colors.grey[200]!;
+    final textColor = Colors.grey[700]!;
 
     return Stack(
       children: [
@@ -354,7 +462,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
             mainAxisSize: MainAxisSize.min,
             children: [
               Material(
-                color: Colors.grey[200],
+                color: backgroundColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(_radiusLoadingAnimation.value),
                   bottomLeft: Radius.circular(_radiusLoadingAnimation.value),
@@ -379,7 +487,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
                   topRight: Radius.circular(_radiusLoadingAnimation.value),
                   bottomRight: Radius.circular(_radiusLoadingAnimation.value),
                 ),
-                color: Colors.grey[200],
+                color: backgroundColor,
                 child: InkWell(
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(_radiusLoadingAnimation.value),
@@ -390,7 +498,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
                     width: _widthLoadingAnimation.value * 0.27,
                     height: heightSize,
                     alignment: Alignment.center,
-                    child: const Icon(Icons.more_vert, color: Colors.grey, size: 20),
+                    child: Icon(Icons.more_vert, color: textColor, size: 20),
                   ),
                 ),
               ),
@@ -400,7 +508,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
           Opacity(
             opacity: _opacityLoadingBackgroundAnimation.value,
             child: Material(
-              color: Colors.grey[200],
+              color: backgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(_radiusLoadingAnimation.value)),
               child: InkWell(
                 onTap: widget.onCancel,
@@ -415,7 +523,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
                       children: [
                         Center(
                           child: CircularProgressIndicator(
-                            color: Colors.grey[600],
+                            color: textColor,
                             value: widget.progress,
                           ),
                         ),
@@ -424,7 +532,7 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
                             width: heightSize * 0.4,
                             height: heightSize * 0.4,
                             decoration: BoxDecoration(
-                              color: Colors.grey[600],
+                              color: textColor,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),

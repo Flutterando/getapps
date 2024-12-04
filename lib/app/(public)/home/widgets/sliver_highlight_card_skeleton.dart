@@ -29,11 +29,10 @@ class _SliverHighlightCardSkeletonState extends State<SliverHighlightCardSkeleto
               scrollDirection: Axis.horizontal,
               controller: _pageController,
               itemBuilder: (context, index) {
-                return HighlightCard(
+                return const HighlightCard(
                   title: '',
                   infoLabel: '',
                   sizeLabel: '',
-                  onPressed: () => {},
                 );
               },
             ),

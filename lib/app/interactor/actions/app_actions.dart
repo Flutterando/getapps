@@ -3,8 +3,26 @@ import 'dart:isolate';
 
 import '../../app.dart';
 
+void openRepository(AppModel model) {
+  final codeHosting = injector.get<CodeHostingService>();
+  codeHosting.openRepository(model.app);
+}
+
 final setSearchTextAction = atomAction1<String>((set, text) {
   set(searchTextState, text);
+});
+
+final favoriteAppAction = atomAction1<AppModel>((set, model) async {
+  final storage = injector.get<AppLocalStorageService>();
+
+  final app = model.app.copyWith(favorite: !model.app.favorite);
+
+  await storage
+      .putApp(app) //
+      .map(AppState.init)
+      .onSuccess(model.update);
+
+  set(appsState, appsState.state.toList());
 });
 
 final fetchAppVersionAction = atomAction((set) {
@@ -38,11 +56,13 @@ Future<bool> checkInstallPersmission() async {
 final checkUpdatesActions = atomAction1<List<AppModel>>((set, apps) async {
   set(baseExceptionState, null);
   final codeHosting = injector.get<CodeHostingService>();
+  final storage = injector.get<AppLocalStorageService>();
   final installedApps = apps.where((app) => app.state is InstalledAppState).toList();
 
   for (var i = 0; i < installedApps.length; i++) {
     await codeHosting
         .getLastRelease(installedApps[i].app) //
+        .flatMap(storage.putApp)
         .onSuccess((app) => installedApps[i].update(AppState.init(app)));
   }
 });

@@ -37,10 +37,6 @@ class _MyAppsPageState extends State<MyAppsPage> with HookStateMixin {
                     return Container(
                       margin: 16.0.paddingBottom,
                       child: AppTile.horizontal(
-                        onPressed: () => Routefly.push(
-                          routePaths.detailsApp,
-                          arguments: appModel,
-                        ),
                         imageBytes: appModel.app.packageInfo.imageBytes,
                         title: appModel.app.appName,
                         infoLabel: appModel.app.repository.organizationName,

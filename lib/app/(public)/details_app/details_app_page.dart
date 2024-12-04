@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
@@ -92,9 +91,7 @@ class _DetailsAppPageState extends State<DetailsAppPage> {
                           }
                         },
                         child: Text(
-                          appModel.app.appNotInstall
-                              ? 'Instalar'
-                              : 'Desinstalar',
+                          appModel.app.appNotInstall ? 'Instalar' : 'Desinstalar',
                           style: context.textTheme.labelLarge,
                         ),
                       ),
