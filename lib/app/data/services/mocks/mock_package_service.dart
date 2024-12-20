@@ -4,7 +4,7 @@ import 'image_bytes.dart';
 
 class MockPackageService implements PackageService {
   @override
-  AsyncResult<AppEntity, AppException> installApp(AppEntity app) async {
+  AsyncResult<AppEntity> installApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app.copyWith(
       packageInfo: PackageInfoEntity(
@@ -25,7 +25,7 @@ class MockPackageService implements PackageService {
   }
 
   @override
-  AsyncResult<AppEntity, AppException> addInfo(AppEntity app) async {
+  AsyncResult<AppEntity> addInfo(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app.copyWith(
       packageInfo: PackageInfoEntity(
@@ -38,24 +38,24 @@ class MockPackageService implements PackageService {
   }
 
   @override
-  AsyncResult<Unit, AppException> openApp(AppEntity app) async {
+  AsyncResult<Unit> openApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success.unit();
   }
 
   @override
-  AsyncResult<AppEntity, AppException> uninstallApp(AppEntity app) async {
+  AsyncResult<AppEntity> uninstallApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return Success(app);
   }
 
   @override
-  AsyncResult<List<AppEntity>, AppException> addInfos(List<AppEntity> apps) async {
+  AsyncResult<List<AppEntity>> addInfos(List<AppEntity> apps) async {
     return Success(apps);
   }
 
   @override
-  AsyncResult<Unit, AppException> checkInstallPermission() async {
+  AsyncResult<Unit> checkInstallPermission() async {
     return Success.unit();
   }
 }

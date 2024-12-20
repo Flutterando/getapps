@@ -263,14 +263,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  result_command:
+    dependency: "direct main"
+    description:
+      name: result_command
+      sha256: "1fcf132c9c0290aaff18861272213837604c53480aead87f572b062f721050ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   result_dart:
     dependency: "direct main"
     description:
       name: result_dart
-      sha256: "3c69c864a08df0f413a86be211d07405e9a53cc1ac111e3cc8365845a0fb5288"
+      sha256: dcb881f351d3f34011fc95c7cfd83d7ba8f8d7ef99291fc83af05c7761b21132
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "2.0.0"
   routefly:
     dependency: "direct main"
     description:

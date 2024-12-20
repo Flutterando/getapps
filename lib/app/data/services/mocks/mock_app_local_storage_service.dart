@@ -62,7 +62,7 @@ final _apps = <AppEntity>[
 
 class MockAppLocalStorageService implements AppLocalStorageService {
   @override
-  AsyncResult<AppEntity, AppException> putApp(AppEntity app) async {
+  AsyncResult<AppEntity> putApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (!_apps.contains(app)) {
@@ -74,14 +74,14 @@ class MockAppLocalStorageService implements AppLocalStorageService {
   }
 
   @override
-  AsyncResult<AppEntity, AppException> deleteApp(AppEntity app) async {
+  AsyncResult<AppEntity> deleteApp(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 500));
     _apps.remove(app);
     return Success(app);
   }
 
   @override
-  AsyncResult<List<AppEntity>, AppException> fetchApps([_]) async {
+  AsyncResult<List<AppEntity>> fetchApps([_]) async {
     await Future.delayed(const Duration(milliseconds: 800));
     return Success(_apps);
   }

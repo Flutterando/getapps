@@ -2,17 +2,20 @@ import 'package:asp/asp.dart';
 import 'package:getapps/app/core/states/state.dart';
 import 'package:result_dart/result_dart.dart';
 
-extension AsyncResultCustomExtension<T extends Object, E extends Object>
-    on AsyncResult<T, E> {
-  AsyncResult<T, E> updateState(Atom<T> state, SetState set) {
+import '../exceptions/exception.dart';
+
+extension AsyncResultCustomExtension<T extends Object> on AsyncResult<T> {
+  AsyncResult<T> updateState(Atom<T> state, SetState set) {
     return fold((s) {
       set(baseLoadingState, false);
       set(state, s);
-      return Result.success(s);
+      return Success(s);
     }, (e) {
-      set(baseExceptionState, e);
+      if (e is AppException) {
+        set(baseExceptionState, e);
+      }
       set(baseLoadingState, false);
-      return Result.failure(e);
+      return Failure(e);
     });
   }
 }

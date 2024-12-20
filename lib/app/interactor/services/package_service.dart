@@ -1,10 +1,10 @@
 import '../../app.dart';
 
 abstract interface class PackageService {
-  AsyncResult<AppEntity, AppException> addInfo(AppEntity app);
-  AsyncResult<List<AppEntity>, AppException> addInfos(List<AppEntity> apps);
-  AsyncResult<AppEntity, AppException> installApp(AppEntity app);
-  AsyncResult<Unit, AppException> checkInstallPermission();
-  AsyncResult<AppEntity, AppException> uninstallApp(AppEntity app);
-  AsyncResult<Unit, AppException> openApp(AppEntity app);
+  AsyncResult<AppEntity> addInfo(AppEntity app);
+  AsyncResult<List<AppEntity>> addInfos(List<AppEntity> apps);
+  AsyncResult<AppEntity> installApp(AppEntity app);
+  AsyncResult<Unit> checkInstallPermission();
+  AsyncResult<AppEntity> uninstallApp(AppEntity app);
+  AsyncResult<Unit> openApp(AppEntity app);
 }

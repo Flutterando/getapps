@@ -4,7 +4,7 @@ class MockCodeHostingService implements CodeHostingService {
   var _percent = 0.0;
 
   @override
-  AsyncResult<AppEntity, AppException> downloadAPK(
+  AsyncResult<AppEntity> downloadAPK(
     AppEntity app,
     String asset,
     void Function(double percent) onProgress,
@@ -20,7 +20,7 @@ class MockCodeHostingService implements CodeHostingService {
   }
 
   @override
-  AsyncResult<AppEntity, AppException> getLastRelease(AppEntity app) async {
+  AsyncResult<AppEntity> getLastRelease(AppEntity app) async {
     await Future.delayed(const Duration(milliseconds: 1500));
 
     return Success(app);
