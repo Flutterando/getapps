@@ -38,7 +38,7 @@ final fetchAppsActions = atomAction((set) async {
 
   final storage = injector.get<AppLocalStorageService>();
   final package = injector.get<PackageService>();
-  final getAppsEntity = AppEntity.getAppsEntity();
+  final getAppsEntity = AppEntity.thisAppEntity();
 
   await storage
       .fetchApps() //
