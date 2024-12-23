@@ -5,6 +5,8 @@ import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
 import 'package:uicons/uicons.dart';
 
+import 'view_models/home_viewmodel.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -16,6 +18,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
   final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
   final _keyRefreshTop = GlobalKey<RefreshIndicatorState>();
 
+  final homeViewmodel = injector.get<HomeViewmodel>();
+
   @override
   void initState() {
     super.initState();
@@ -25,17 +29,18 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
   }
 
   void onChanged(String value) {
-    debounceSearch.call(() {
-      setSearchTextAction(value);
+    debounceSearch(() {
+      homeViewmodel.searchApps(value);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final apps = useAtomState(filteredAppsState);
-    final favoriteApps = useAtomState(favoriteAppsState);
+    useListenable(homeViewmodel);
+    final appModels = homeViewmodel.apps;
+    final favoriteApps = homeViewmodel.favoriteApps;
+    final isFavoriteView = favoriteApps.isNotEmpty && homeViewmodel.searchQuery.isEmpty;
 
-    final isFavoriteView = favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
     final size = MediaQuery.sizeOf(context);
     final primary = Theme.of(context).colors.red;
 
@@ -45,15 +50,15 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
         key: _keyRefreshTop,
         color: primary,
         onRefresh: () {
-          return Future.value(checkUpdatesActions(appsState.state));
+          return homeViewmodel.fetchAppsCommand.execute();
         },
         child: CustomScrollView(
           slivers: [
             SliverAppbarHome(
               onChanged: onChanged,
-              onMyApp: () => Routefly.push(routePaths.myApps),
-              onRegisterApp: () => Routefly.push(routePaths.registerApp),
-              onRemoveSearch: () => setSearchTextAction(''),
+              onMyApp: () {},
+              onRegisterApp: () {},
+              onRemoveSearch: () => onChanged(''),
             ),
             SliverToBoxAdapter(
               child: AnimatedAlign(
@@ -105,9 +110,9 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                     buttonLabel: buttonLabel,
                                     onTap: () {
                                       if (app.appNotInstall || app.updateIsAvailable) {
-                                        installAppAction(appModel, '');
+                                        appModel.installAppCommand.execute();
                                       } else {
-                                        openApp(app);
+                                        appModel.openApp();
                                       }
                                     },
                                     onOptions: () {
@@ -118,7 +123,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                         },
                                       );
                                     },
-                                    onCancel: () => cancelInstallAppAction(),
+                                    onCancel: appModel.installAppCommand.cancel,
                                   ),
                                 );
                               },
@@ -136,13 +141,15 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
               child: TitleSectionHome(title: 'Meus apps'),
             ),
             SliverToBoxAdapter(
-              child: AnimatedAppsList(models: apps),
+              child: AnimatedAppsList(models: appModels),
             ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: 32.0.paddingTop + 24.0.paddingBottom,
-                child: const Center(
-                  child: VersionWidget(),
+                child: Center(
+                  child: VersionWidget(
+                    version: homeViewmodel.appVersion,
+                  ),
                 ),
               ),
             )
@@ -154,10 +161,10 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
 }
 
 class AnimatedAppsList extends StatelessWidget {
-  final List<AppModel> models;
+  final List<AppViewmodel> models;
   const AnimatedAppsList({super.key, required this.models});
 
-  Widget _buildItem(List<AppModel> apps) {
+  Widget _buildItem(List<AppViewmodel> apps) {
     return apps.isEmpty
         ? const SizedBox()
         : Padding(
@@ -213,9 +220,9 @@ class AnimatedAppsList extends StatelessWidget {
                                 buttonLabel: buttonLabel,
                                 onTap: () {
                                   if (app.appNotInstall || app.updateIsAvailable) {
-                                    installAppAction(appModel, '');
+                                    appModel.installAppCommand.execute();
                                   } else {
-                                    openApp(app);
+                                    appModel.openApp();
                                   }
                                 },
                                 onOptions: () {
@@ -226,7 +233,7 @@ class AnimatedAppsList extends StatelessWidget {
                                     },
                                   );
                                 },
-                                onCancel: () => cancelInstallAppAction(),
+                                onCancel: appModel.installAppCommand.cancel,
                               ),
                             ),
                           ),
@@ -284,7 +291,7 @@ Widget _buildButtonLabel(String label, IconData icon) {
 }
 
 class AppDetailModalWidget extends StatelessWidget with HookMixin {
-  final AppModel appModel;
+  final AppViewmodel appModel;
 
   const AppDetailModalWidget({super.key, required this.appModel});
 
@@ -307,9 +314,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                 ? const SizedBox()
                 : Center(
                     child: GestureDetector(
-                      onTap: () {
-                        favoriteAppAction(appModel);
-                      },
+                      onTap: appModel.favoriteApp,
                       child: Icon(
                         appModel.app.favorite ? Icons.favorite : Icons.favorite_border,
                         color: primary,
@@ -321,7 +326,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           const Gap(30),
           ElevatedButton(
             onPressed: () {
-              openRepository(appModel);
+              appModel.openRepository();
               Navigator.pop(context);
             },
             child: const Text(
@@ -333,7 +338,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           if (appModel.app.appNotInstall)
             ElevatedButton(
               onPressed: () {
-                installAppAction(appModel, '');
+                appModel.installAppCommand.execute();
                 Navigator.pop(context);
               },
               child: const Text('Instalar', style: TextStyle(color: Colors.white)),
@@ -341,7 +346,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           if (appModel.app.updateIsAvailable)
             ElevatedButton(
               onPressed: () {
-                installAppAction(appModel, '');
+                appModel.installAppCommand.execute();
                 Navigator.pop(context);
               },
               child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
@@ -350,7 +355,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                openApp(appModel.app);
+                appModel.openApp();
               },
               child: const Text('Abrir', style: TextStyle(color: Colors.white)),
             ),
@@ -361,12 +366,12 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
   }
 }
 
-class VersionWidget extends StatelessWidget with HookMixin {
-  const VersionWidget({super.key});
+class VersionWidget extends StatelessWidget {
+  const VersionWidget({super.key, required this.version});
+  final String version;
 
   @override
   Widget build(BuildContext context) {
-    final version = useAtomState(appVersionState);
     return Text(
       'Versão $version',
       style: context.textTheme.labelLarge?.copyWith(color: const Color(0xff939AA5)),

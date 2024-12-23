@@ -1,6 +1,7 @@
 import 'package:getapps/app/app.dart';
+import 'package:getapps/app/data/repositories/code_hosting_repository.dart';
 
-class MockCodeHostingService implements CodeHostingService {
+class MockCodeHostingRepository implements CodeHostingRepository {
   var _percent = 0.0;
 
   @override
@@ -28,4 +29,9 @@ class MockCodeHostingService implements CodeHostingService {
 
   @override
   Future<void> openRepository(AppEntity app) async {}
+
+  @override
+  AsyncResult<AppEntity> checkUpdate(AppEntity app) async {
+    return Success(app);
+  }
 }

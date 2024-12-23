@@ -14,4 +14,6 @@ void main() {
     final s = appEntity.copyWith.currentRelease(tagName: '1.0.0');
     print(s);
   });
+
+  test('unions', () {});
 }

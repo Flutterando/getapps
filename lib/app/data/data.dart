@@ -1,3 +1,2 @@
-export 'services/mocks/mock_app_local_storage_service.dart';
-export 'services/mocks/mock_code_hosting_service.dart';
-export 'services/mocks/mock_package_service.dart';
+export 'repositories/mocks/mock_app_repository.dart';
+export 'repositories/mocks/mock_code_hosting_repository.dart';

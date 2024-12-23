@@ -1,6 +1,6 @@
 import '../../app.dart';
 
-abstract interface class CodeHostingService {
+abstract interface class CodeHostingRepository {
   AsyncResult<AppEntity> getLastRelease(AppEntity app);
   AsyncResult<AppEntity> downloadAPK(
     AppEntity app,
@@ -8,4 +8,5 @@ abstract interface class CodeHostingService {
     void Function(double percent) onProgress,
   );
   Future<void> openRepository(AppEntity app);
+  AsyncResult<AppEntity> checkUpdate(AppEntity app);
 }

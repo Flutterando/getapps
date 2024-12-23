@@ -23,23 +23,82 @@ class AppEntity with _$AppEntity {
     @Default(false) bool favorite,
   }) = _AppEntity;
 
+  const factory AppEntity.loading({
+    @PackageInfoEntityConverter() required PackageInfoEntity packageInfo,
+    @RepositoryEntityConverter() required RepositoryEntity repository,
+    @AppReleaseEntityConverter() required AppReleaseEntity lastRelease,
+    @AppReleaseEntityConverter() required AppReleaseEntity currentRelease,
+    double? progress,
+    @FileConverter() File? file,
+    @Default(false) bool favorite,
+  }) = LoadingAppEntity;
+
+  const factory AppEntity.installed({
+    @PackageInfoEntityConverter() required PackageInfoEntity packageInfo,
+    @RepositoryEntityConverter() required RepositoryEntity repository,
+    @AppReleaseEntityConverter() required AppReleaseEntity lastRelease,
+    @AppReleaseEntityConverter() required AppReleaseEntity currentRelease,
+    @FileConverter() File? file,
+    @Default(false) bool favorite,
+  }) = InstalledAppEntity;
+
+  const factory AppEntity.notInstalled({
+    @RepositoryEntityConverter() required RepositoryEntity repository,
+    @PackageInfoEntityConverter() @Default(PackageInfoEntity.empty()) PackageInfoEntity packageInfo,
+    @AppReleaseEntityConverter() @Default(AppReleaseEntity.empty()) AppReleaseEntity lastRelease,
+    @AppReleaseEntityConverter() @Default(AppReleaseEntity.empty()) AppReleaseEntity currentRelease,
+    @FileConverter() File? file,
+    @Default(false) bool favorite,
+  }) = NotInstalledAppEntity;
+
   factory AppEntity.fromJson(Map<String, Object?> json) => _$AppEntityFromJson(json);
 
-  static AppEntity notInstallApp(RepositoryEntity repository) {
-    return AppEntity(
+  static NotInstalledAppEntity notInstallApp(RepositoryEntity repository) {
+    return NotInstalledAppEntity(
       repository: repository,
-      packageInfo: const PackageInfoEntity.empty(),
-      lastRelease: const AppReleaseEntity.empty(),
-      currentRelease: const AppReleaseEntity.empty(),
     );
   }
 
-  bool get appNotInstall => packageInfo is EmptyPackageInfoEntity;
+  bool get appNotInstall => this is NotInstalledAppEntity;
   bool get updateIsAvailable => lastRelease != currentRelease;
   String get appName => packageInfo.name ?? repository.projectName;
 
+  LoadingAppEntity toLoading([double? progress]) {
+    return LoadingAppEntity(
+      packageInfo: packageInfo,
+      repository: repository,
+      lastRelease: lastRelease,
+      currentRelease: currentRelease,
+      file: file,
+      favorite: favorite,
+      progress: progress,
+    );
+  }
+
+  InstalledAppEntity toInstalled() {
+    return InstalledAppEntity(
+      packageInfo: packageInfo,
+      repository: repository,
+      lastRelease: lastRelease,
+      currentRelease: currentRelease,
+      file: file,
+      favorite: favorite,
+    );
+  }
+
+  NotInstalledAppEntity toNotInstalled() {
+    return NotInstalledAppEntity(
+      packageInfo: packageInfo,
+      repository: repository,
+      lastRelease: lastRelease,
+      currentRelease: currentRelease,
+      file: file,
+      favorite: favorite,
+    );
+  }
+
   static AppEntity thisAppEntity() {
-    return const AppEntity(
+    return const InstalledAppEntity(
       repository: RepositoryEntity(
         provider: GitRepositoryProvider.github,
         organizationName: 'Flutterando',
