@@ -15,10 +15,6 @@ class InstallAppUsecase {
   Completer? finishIsateCompleter;
   var _isolateExitForced = true;
 
-  final _streamController = StreamController<AppEntity>.broadcast();
-
-  Stream<AppEntity> get stream => _streamController.stream;
-
   Result<Unit> cancelInstallApp([bool force = true]) {
     _isolateExitForced = force;
     finishIsateCompleter?.complete();

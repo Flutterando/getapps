@@ -64,7 +64,7 @@ final _apps = <AppEntity>[
 class MockAppRepository implements AppRepository {
   @override
   AsyncResult<AppEntity> installApp(AppEntity app) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 1500));
     return Success(app.copyWith(
       packageInfo: PackageInfoEntity(
         id: 'my.com.app.test',

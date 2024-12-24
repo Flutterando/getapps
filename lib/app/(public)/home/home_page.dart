@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
     useListenable(homeViewmodel);
     final appModels = homeViewmodel.apps;
     final favoriteApps = homeViewmodel.favoriteApps;
-    final isFavoriteView = favoriteApps.isNotEmpty && homeViewmodel.searchQuery.isEmpty;
+    final canVisibleFavoriteView = homeViewmodel.canVisibleFavoriteView;
 
     final size = MediaQuery.sizeOf(context);
     final primary = Theme.of(context).colors.red;
@@ -62,9 +62,9 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             ),
             SliverToBoxAdapter(
               child: AnimatedAlign(
-                alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
+                alignment: canVisibleFavoriteView ? Alignment.center : Alignment.bottomCenter,
                 curve: Curves.easeOut,
-                heightFactor: isFavoriteView ? 1 : 0,
+                heightFactor: canVisibleFavoriteView ? 1 : 0,
                 duration: const Duration(milliseconds: 500),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                     buttonLabel: buttonLabel,
                                     onTap: () {
                                       if (app.appNotInstall || app.updateIsAvailable) {
-                                        appModel.installAppCommand.execute();
+                                        appModel.install();
                                       } else {
                                         appModel.openApp();
                                       }
@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                         },
                                       );
                                     },
-                                    onCancel: appModel.installAppCommand.cancel,
+                                    onCancel: appModel.cancelInstallation,
                                   ),
                                 );
                               },
@@ -220,7 +220,7 @@ class AnimatedAppsList extends StatelessWidget {
                                 buttonLabel: buttonLabel,
                                 onTap: () {
                                   if (app.appNotInstall || app.updateIsAvailable) {
-                                    appModel.installAppCommand.execute();
+                                    appModel.install();
                                   } else {
                                     appModel.openApp();
                                   }
@@ -233,7 +233,7 @@ class AnimatedAppsList extends StatelessWidget {
                                     },
                                   );
                                 },
-                                onCancel: appModel.installAppCommand.cancel,
+                                onCancel: appModel.cancelInstallation,
                               ),
                             ),
                           ),
@@ -338,7 +338,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           if (appModel.app.appNotInstall)
             ElevatedButton(
               onPressed: () {
-                appModel.installAppCommand.execute();
+                appModel.install();
                 Navigator.pop(context);
               },
               child: const Text('Instalar', style: TextStyle(color: Colors.white)),
@@ -346,7 +346,7 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           if (appModel.app.updateIsAvailable)
             ElevatedButton(
               onPressed: () {
-                appModel.installAppCommand.execute();
+                appModel.install();
                 Navigator.pop(context);
               },
               child: const Text('Atualizar', style: TextStyle(color: Colors.white)),

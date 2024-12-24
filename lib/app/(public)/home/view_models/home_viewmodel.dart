@@ -2,26 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/data/repositories/app_repository.dart';
 import 'package:getapps/app/data/repositories/code_hosting_repository.dart';
-import 'package:getapps/app/domain/usecases/install_app_usecase.dart';
-import 'package:getapps/app/domain/usecases/uninstall_app_usecase.dart';
 
 part 'app_viewmodel.dart';
 
 class HomeViewmodel extends ChangeNotifier {
-  HomeViewmodel(this._appRepository, this._codeHostingRepository);
+  HomeViewmodel(this._appRepository, this._codeHostingRepository, this._installAppUsecase);
 
   final AppRepository _appRepository;
   final CodeHostingRepository _codeHostingRepository;
+  final InstallAppUsecase _installAppUsecase;
+
   late final fetchAppsCommand = Command0(_fetchApps);
   late final deleteAppCommand = Command1(_deleteApp);
   late final registerAppCommand = Command1(_registerApp);
   late final checkUpdateCommand = Command0(_checkUpdates);
+  late final installAppCommand = Command1(
+    _installApp,
+    onCancel: _installAppUsecase.cancelInstallApp,
+  );
 
   String _appVersion = '';
   String get appVersion => _appVersion;
 
   String _searchQuery = '';
-  String get searchQuery => _searchQuery;
 
   List<AppViewmodel> _apps = [];
   List<AppViewmodel> get apps {
@@ -42,6 +45,8 @@ class HomeViewmodel extends ChangeNotifier {
       return state.app.favorite && !state.app.appNotInstall;
     }).toList();
   }
+
+  bool get canVisibleFavoriteView => favoriteApps.isNotEmpty && _searchQuery.isEmpty;
 
   void _setApps(List<AppViewmodel> apps) {
     _apps = apps;
@@ -85,10 +90,10 @@ class HomeViewmodel extends ChangeNotifier {
     return apps
         .map((app) => AppViewmodel(
               app,
-              InstallAppUsecase(_appRepository),
               UninstallAppUsecase(_appRepository),
               _codeHostingRepository,
               _appRepository,
+              installAppCommand,
             ))
         .toList();
   }
@@ -115,5 +120,16 @@ class HomeViewmodel extends ChangeNotifier {
     return _appRepository
         .deleteApp(app) //
         .flatMap(_fetchApps);
+  }
+
+  AsyncResult<Unit> _installApp(AppViewmodel appModel, [String selectedAsset = '']) async {
+    final app = appModel.app.toLoading();
+    appModel._updateApp(app);
+
+    return _installAppUsecase.call(
+      app,
+      selectedAsset,
+      appModel._updateApp,
+    );
   }
 }

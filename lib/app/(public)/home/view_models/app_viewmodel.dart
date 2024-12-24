@@ -3,25 +3,19 @@ part of 'home_viewmodel.dart';
 class AppViewmodel extends ChangeNotifier {
   AppViewmodel(
     AppEntity app,
-    InstallAppUsecase installAppUsecase,
     UninstallAppUsecase uninstallAppUsecase,
     CodeHostingRepository codeHostingRepository,
     AppRepository appRepository,
+    this.installAppCommand,
   )   : _app = app,
         _uninstallAppUsecase = uninstallAppUsecase,
         _codeHostingRepository = codeHostingRepository,
-        _appRepository = appRepository,
-        _installAppUsecase = installAppUsecase;
+        _appRepository = appRepository;
 
-  final InstallAppUsecase _installAppUsecase;
   final CodeHostingRepository _codeHostingRepository;
   final AppRepository _appRepository;
   final UninstallAppUsecase _uninstallAppUsecase;
-
-  late final installAppCommand = Command0(
-    _installApp,
-    onCancel: _installAppUsecase.cancelInstallApp,
-  );
+  final Command1<Unit, AppViewmodel> installAppCommand;
 
   late final uninstallAppCommand = Command0(_uninstallApp);
 
@@ -36,6 +30,12 @@ class AppViewmodel extends ChangeNotifier {
     return null;
   }
 
+  void install() {
+    installAppCommand.execute(this);
+  }
+
+  void cancelInstallation() => installAppCommand.cancel();
+
   void openRepository() {
     _codeHostingRepository.openRepository(_app);
   }
@@ -45,25 +45,19 @@ class AppViewmodel extends ChangeNotifier {
   }
 
   AsyncResult<AppEntity> favoriteApp() async {
+    final appCache = _app;
     final newApp = _app.copyWith(favorite: !_app.favorite);
+    _updateApp(newApp);
 
     return _appRepository
         .putApp(newApp) //
-        .onSuccess(_updateApp);
+        .onFailure((e) => _updateApp(appCache));
   }
 
   void _updateApp(AppEntity newApp) {
     if (newApp == _app) return;
     _app = newApp;
     notifyListeners();
-  }
-
-  AsyncResult<Unit> _installApp([String selectedAsset = '']) async {
-    return _installAppUsecase.call(
-      _app,
-      selectedAsset,
-      _updateApp,
-    );
   }
 
   AsyncResult<AppEntity> _uninstallApp() async {
