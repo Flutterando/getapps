@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:getapps/app/domain/entities/app_entity.dart';
-import 'package:getapps/app/domain/entities/repository_entity.dart';
+import 'package:getapps/domain/entities/app_entity.dart';
+import 'package:getapps/domain/entities/repository_entity.dart';
 
 void main() {
   test('app entity ...', () async {

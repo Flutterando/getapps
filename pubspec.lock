@@ -53,14 +53,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.0"
-  asp:
-    dependency: "direct main"
-    description:
-      name: asp
-      sha256: faa4e6cfa67870b65f273b4e2e61a7b0a90c7c14aef29b35ac60ad6385122932
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.3"
   async:
     dependency: "direct main"
     description:
@@ -317,7 +309,7 @@ packages:
     source: hosted
     version: "2.3.2"
   hook_state:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hook_state
       sha256: eed5b48b6000225b74fe53dc04281fc7f0412c3d3ad5b8e79be02fda6d6476b7
@@ -552,10 +544,10 @@ packages:
     dependency: "direct main"
     description:
       name: routefly
-      sha256: becf6ae1d99644ab896f1d27ad7ac12b4215a14f85e66ef98fc6993ea81a0092
+      sha256: "0e9033aa6e39be883028188d9a3761bd08ece549cbd216083308152a1005bea4"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "3.0.0-alpha.2"
   shelf:
     dependency: transitive
     description:

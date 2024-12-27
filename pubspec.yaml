@@ -7,14 +7,13 @@ environment:
   sdk: ^3.5.3
 
 dependencies:
-  asp: ^2.0.3
   async: ^2.11.0
   auto_injector: ^2.0.5
   flutter:
     sdk: flutter
   flutter_isolate: ^2.1.0
   result_dart: ^2.0.0
-  routefly: ^2.0.4
+  routefly: ^3.0.0-alpha.2
   uno: ^1.1.12
   uicons: ^1.0.1
   gap: ^3.0.1
@@ -25,6 +24,7 @@ dependencies:
   result_command: ^1.2.0
   freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
+  hook_state: ^0.4.2
   
 
 dev_dependencies:
