@@ -1,8 +1,6 @@
 import 'package:result_dart/result_dart.dart';
 
 import '../domain.dart';
-import '../repositories/app_repository.dart';
-import '../repositories/code_hosting_repository.dart';
 
 class RegisterAppUsecase {
   RegisterAppUsecase(
@@ -13,10 +11,20 @@ class RegisterAppUsecase {
   final AppRepository _appRepository;
   final CodeHostingRepository _codeHostingRepository;
 
-  AsyncResult<AppEntity> call(String repositoryUrl) {
-    final uri = Uri.parse(repositoryUrl);
+  AsyncResult<AppEntity> call(String repositoryUrl) async {
+    final uri = Uri.tryParse(repositoryUrl);
+    if (uri == null) {
+      return InvalidRepositoryUrlException().toFailure();
+    }
+
+    final provider = _getProvider(uri);
+
+    if (provider == GitRepositoryProvider.unknow) {
+      return InvalidRepositoryUrlException().toFailure();
+    }
+
     final appRepository = RepositoryEntity(
-      provider: GitRepositoryProvider.github,
+      provider: provider,
       organizationName: uri.pathSegments[0],
       projectName: uri.pathSegments[1],
     );
@@ -26,5 +34,12 @@ class RegisterAppUsecase {
     return _codeHostingRepository
         .getLastRelease(app) //
         .flatMap(_appRepository.putApp);
+  }
+
+  GitRepositoryProvider _getProvider(Uri uri) {
+    return GitRepositoryProvider.values.firstWhere(
+      (provider) => provider.host == uri.host,
+      orElse: () => GitRepositoryProvider.unknow,
+    );
   }
 }

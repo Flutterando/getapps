@@ -119,9 +119,8 @@ class MockAppRepository implements AppRepository {
   }
 
   @override
-  AsyncResult<AppEntity> deleteApp(AppEntity app) {
-    // TODO: implement deleteApp
-    throw UnimplementedError();
+  AsyncResult<AppEntity> deleteApp(AppEntity app) async {
+    return Success(app);
   }
 
   @override

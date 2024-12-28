@@ -13,9 +13,9 @@ void setupInjection() {
   injector.addSingleton<AppRepository>(MockAppRepository.new);
 
   // domain
-  injector.add(InstallAppUsecase.new);
-  injector.add(UninstallAppUsecase.new);
-  injector.add(RegisterAppUsecase.new);
-  injector.addSingleton(HomeViewmodel.new);
+  injector.addLazySingleton(InstallAppUsecase.new);
+  injector.addLazySingleton(UninstallAppUsecase.new);
+  injector.addLazySingleton(RegisterAppUsecase.new);
+  injector.addLazySingleton(HomeViewmodel.new);
   injector.commit();
 }

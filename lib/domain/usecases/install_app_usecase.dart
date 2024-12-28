@@ -1,25 +1,23 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:getapps/domain/repositories/app_repository.dart';
-import 'package:getapps/domain/repositories/code_hosting_repository.dart';
 import 'package:getapps/utils/extensions/extensions.dart';
 import 'package:result_dart/result_dart.dart';
 
-import '../../config/dependencies.dart';
 import '../domain.dart';
 
 class InstallAppUsecase {
   final AppRepository _appRepository;
+  final CodeHostingRepository _codeHostingRepository;
 
-  InstallAppUsecase(this._appRepository);
+  InstallAppUsecase(this._appRepository, this._codeHostingRepository);
 
   Isolate? _installIsolate;
   ReceivePort? _installReceivePort;
   Completer? finishIsateCompleter;
   var _isolateExitForced = true;
 
-  Result<Unit> cancelInstallApp([bool force = true]) {
+  Result<Unit> cancelInstall([bool force = true]) {
     _isolateExitForced = force;
     finishIsateCompleter?.complete();
     finishIsateCompleter = null;
@@ -32,17 +30,17 @@ class InstallAppUsecase {
     return const Success(unit);
   }
 
-  AsyncResult<Unit> call(
-    AppEntity app,
-    String asset,
-    void Function(AppEntity) onChangeApp,
-  ) async {
+  AsyncResult<Unit> call({
+    required AppEntity app,
+    required String asset,
+    required void Function(AppEntity) onChangeApp,
+  }) async {
     final canInstall = await _appRepository.checkInstallPermission();
     if (canInstall.isError()) {
       return Failure(Exception('Permission denied'));
     }
 
-    cancelInstallApp(true);
+    cancelInstall(true);
     final firstState = app;
 
     finishIsateCompleter = Completer();
@@ -52,13 +50,13 @@ class InstallAppUsecase {
         onChangeApp(message);
         return;
       } else if (message == 'finish') {
-        cancelInstallApp(false);
+        cancelInstall(false);
       }
     });
 
     _installIsolate = await Isolate.spawn(
       _installAppIsolateAction,
-      (app, asset, _installReceivePort!.sendPort),
+      (app, asset, _installReceivePort!.sendPort, _appRepository, _codeHostingRepository),
     );
 
     await finishIsateCompleter!.future;
@@ -71,14 +69,19 @@ class InstallAppUsecase {
 }
 
 @pragma('vm:entry-point')
-Future<void> _installAppIsolateAction((AppEntity, String, SendPort) record) async {
-  final (app, asset, installReceivePort) = record;
+Future<void> _installAppIsolateAction(
+    (
+      AppEntity,
+      String,
+      SendPort,
+      AppRepository,
+      CodeHostingRepository,
+    ) record) async {
+  final (app, asset, installReceivePort, appRepository, codeHosting) = record;
 
-  setupInjection();
-
-  final codeHosting = injector.get<CodeHostingRepository>();
-  final appRepository = injector.get<AppRepository>();
   final currentState = app;
+
+  installReceivePort.send(app.toLoading());
 
   final newState = await codeHosting
       .downloadAPK(app, asset, (percent) {

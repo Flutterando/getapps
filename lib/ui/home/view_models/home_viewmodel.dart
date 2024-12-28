@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:getapps/domain/usecases/register_app_usecase.dart';
 import 'package:getapps/utils/functions/functions.dart';
 import 'package:result_command/result_command.dart';
 import 'package:result_dart/result_dart.dart';
@@ -23,14 +22,14 @@ class HomeViewmodel extends ChangeNotifier {
   final UninstallAppUsecase _uninstallAppUsecase;
   final RegisterAppUsecase _registerAppUsecase;
 
-  final debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
+  final _debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
   late final fetchAppsCommand = Command0(_fetchApps);
   late final deleteAppCommand = Command1(_deleteApp);
   late final registerAppCommand = Command1(_registerApp);
   late final checkUpdateCommand = Command0(_checkUpdates);
   late final installAppCommand = Command1(
     _installApp,
-    onCancel: _installAppUsecase.cancelInstallApp,
+    onCancel: _installAppUsecase.cancelInstall,
   );
   late final _uninstallAppCommand = Command1(_uninstallApp);
 
@@ -70,13 +69,13 @@ class HomeViewmodel extends ChangeNotifier {
   }
 
   void resetSearch() {
-    debounceSearch.cancel();
+    _debounceSearch.cancel();
     _searchQuery = '';
     notifyListeners();
   }
 
   void searchApps(String query) {
-    debounceSearch(() {
+    _debounceSearch(() {
       _searchQuery = query;
       notifyListeners();
     });
@@ -151,13 +150,10 @@ class HomeViewmodel extends ChangeNotifier {
   }
 
   AsyncResult<Unit> _installApp(AppViewmodel appModel, [String selectedAsset = '']) async {
-    final app = appModel.app.toLoading();
-    appModel._updateApp(app);
-
     return _installAppUsecase.call(
-      app,
-      selectedAsset,
-      appModel._updateApp,
+      app: appModel.app,
+      asset: selectedAsset,
+      onChangeApp: appModel._updateApp,
     );
   }
 

@@ -5,9 +5,13 @@ part 'repository_entity.g.dart';
 
 enum GitRepositoryProvider {
   @JsonValue('unknow')
-  unknow,
+  unknow(''),
+
   @JsonValue('github')
-  github,
+  github('github.com');
+
+  final String host;
+  const GitRepositoryProvider(this.host);
 }
 
 @freezed

@@ -68,7 +68,7 @@ class AppViewmodel extends ChangeNotifier {
 
     return _appRepository
         .putApp(newApp) //
-        .map((_) => unit)
+        .pure(unit)
         .onSuccess((_) => _softParentUpdate())
         .onFailure((e) => _updateApp(appCache));
   }
