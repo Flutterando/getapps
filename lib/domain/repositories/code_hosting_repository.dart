@@ -10,5 +10,4 @@ abstract interface class CodeHostingRepository {
     void Function(double percent) onProgress,
   );
   Future<void> openRepository(AppEntity app);
-  AsyncResult<AppEntity> checkUpdate(AppEntity app);
 }

@@ -29,9 +29,4 @@ class MockCodeHostingRepository implements CodeHostingRepository {
 
   @override
   Future<void> openRepository(AppEntity app) async {}
-
-  @override
-  AsyncResult<AppEntity> checkUpdate(AppEntity app) async {
-    return Success(app);
-  }
 }
