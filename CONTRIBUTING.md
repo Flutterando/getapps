@@ -1,62 +1,59 @@
-# Guia de Contribuicao
+# Contribution Guide
 
-Observacao: Somente contribuições que seguem estes requisitos serão aceitos.
+Note: Only contributions that follow these requirements will be accepted.
 
+# Contribution Types
 
-# Tipos 
+## Bug Reports
+To report bugs, make sure there are no similar ones already open in [Github issues](https://github.com/Flutterando/getapps/issues)
+- Detailed description of the problem
+- Steps to reproduce the problem
+- Version of the software where the problem was found
+- Expected behavior
+- Screenshots or logs, if applicable
+- Information about the environment where the problem occurred
 
-## Reporte de Bugs
-Para abrir bugs, certifique-se que não existe nenhum igual  aberto em [Github issues](https://github.com/Flutterando/getapps/issues)
-- Descrição detalhada do problema
-- Passos para reproduzir o problema
-- Versão do código em que encontrou o problema
-- Comportamento esperado
-- Capturas de tela ou logs, se aplicável
-- Informações sobre o ambiente onde ocorreu o problema
+## Bug Fixes
+To contribute with bug fixes:
+1. Check if the problem has already been reported in [Github issues](https://github.com/Flutterando/getapps/issues).
+2. Select an issue you would like to resolve.
+3. Comment on the issue to request to work on the fix.
+4. Follow the instructions in the "How to Contribute" section below to submit your fix.
 
-## Correcao de problemas 
-Para contribuir com correções de problemas:
-1. Verifique se o problema já foi reportado em [Github issues](https://github.com/Flutterando/getapps/issues).
-2. Selecione um issue que você gostaria de resolver.
-3. Comente no issue para solicitando para trabalhar na correção.
-4. Siga as instruções na seção "Como Contribuir" abaixo para enviar sua correção.
+## New Features
+To request new features, make a brief description of the feature in [Github issues](https://github.com/Flutterando/getapps/issues)
+- A clear description of the desired feature
+- Wait for the team's evaluation on the implementation of the feature
 
-## Novas funcionalidades
-Para solicitar novas funcionalidades, faca uma breve descricao sobre a funcionalidade em [Github issues](https://github.com/Flutterando/getapps/issues)
-- Uma descrição clara da funcionalidade desejada
-- Aguarde a avaliação do time sobre a implementação da funcionalidade
+## Documentation
+If you want to contribute to the documentation or any improvement:
+1. Open an (issue)[https://github.com/Flutterando/getapps/issue].
+2. Make the changes or additions.
+3. Follow the instructions in the "How to Contribute" section below to submit your updates.
 
-## Documentacao
-Caso queira contribuir com a documentacao ou alguma melhoria:
-1. Abra uma (issue)[https://github.com/Flutterando/getapps/issue].
-2. Faça as alterações ou adição.
-3. Siga as instruções na seção "Como Contribuir" abaixo para enviar suas atualizações.
-
-
-# Como Contribuir
-1. **Fork o repositório**: Clique no botão "Fork" no canto superior direito da página do repositório.
-2. **Clone o repositório**: Clone o seu fork localmente usando o comando:
+# How to Contribute
+1. **Fork the repository**: Click the "Fork" button in the upper right corner of the repository page.
+2. **Clone the repository**: Clone your fork locally using the command:
     ```sh
-    git clone https://github.com/seu-usuario/seu-fork.git
+    git clone https://github.com/your-username/getapps.git
     ```
-3. **Crie uma branch**: Crie uma nova branch para a sua contribuição:
+3. **Create a branch**: Create a new branch for your contribution:
     ```sh
-    git checkout -b minha-contribuição
+    git checkout -b my-contribution
     ```
-4. **Faça as alterações**: Faça as alterações necessárias no código.
-5. **Commit suas alterações**: Commit suas alterações com uma mensagem descritiva:
+4. **Make the changes**: Make the necessary changes to the code.
+5. **Commit your changes**: Commit your changes with a descriptive message:
     ```sh
-    git commit -m "Descrição das minhas alterações"
+    git commit -m "Description of my changes"
     ```
-6. **Envie para o seu fork**: Envie suas alterações para o seu fork no GitHub:
+6. **Push to your fork**: Push your changes to your fork on GitHub:
     ```sh
-    git push origin minha-contribuicao
+    git push origin my-contribution
     ```
-7. **Abra um Pull Request**: No repositório original, clique no botão "New Pull Request" e selecione a sua branch.
-   1. O titulo da pull request deve sempre seguir o padrao do [commit semantico](https://www.conventionalcommits.org/en/v1.0.0/)
+7. **Open a Pull Request**: In the original repository, click the "New Pull Request" button and select your branch.
+   1. The title of the pull request must always follow the [semantic commit](https://www.conventionalcommits.org/en/v1.0.0/) standard.
 
-
-## Requisitos 
-- Formatar o código de acordo com o arquivo `analysis_options.yaml`.
-- Certifique-se de que o código está bem documentado.
-- Escreva testes para suas alterações e certifique-se de que todos os testes existentes passam.
+## Requirements
+- Format the code according to the `analysis_options.yaml` file.
+- Make sure the code is well documented.
+- Write tests for your changes and make sure all existing tests pass.
