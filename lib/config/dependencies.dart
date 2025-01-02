@@ -3,7 +3,6 @@ import 'package:getapps/data/data.dart';
 import 'package:getapps/ui/home/view_models/home_viewmodel.dart';
 
 import '../domain/domain.dart';
-import '../domain/usecases/register_app_usecase.dart';
 
 final injector = AutoInjector();
 

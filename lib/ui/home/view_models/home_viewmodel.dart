@@ -7,36 +7,24 @@ import '../../../domain/domain.dart';
 
 part 'app_viewmodel.dart';
 
-class HomeViewmodel extends ChangeNotifier {
-  HomeViewmodel(
-    this._appRepository,
-    this._codeHostingRepository,
-    this._installAppUsecase,
-    this._uninstallAppUsecase,
-    this._registerAppUsecase,
-  );
-
-  final AppRepository _appRepository;
-  final CodeHostingRepository _codeHostingRepository;
-  final InstallAppUsecase _installAppUsecase;
-  final UninstallAppUsecase _uninstallAppUsecase;
-  final RegisterAppUsecase _registerAppUsecase;
-
-  final _debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
-  late final fetchAppsCommand = Command0(_fetchApps);
-  late final registerAppCommand = Command1(_registerApp);
-  late final checkUpdateCommand = Command0(_checkUpdates);
-  late final deleteAppCommand = Command1(_deleteApp);
-  late final installAppCommand = Command1(
-    _installApp,
-    onCancel: _installAppUsecase.cancelInstall,
-  );
-  late final _uninstallAppCommand = Command1(_uninstallApp);
-
+mixin _StateHome on ChangeNotifier {
   String _appVersion = '';
   String get appVersion => _appVersion;
 
+  final _debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
   String _searchQuery = '';
+  void resetSearch() {
+    _debounceSearch.cancel();
+    _searchQuery = '';
+    notifyListeners();
+  }
+
+  void searchApps(String query) {
+    _debounceSearch(() {
+      _searchQuery = query;
+      notifyListeners();
+    });
+  }
 
   List<AppViewmodel> _apps = [];
   List<AppViewmodel> get apps {
@@ -73,19 +61,6 @@ class HomeViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetSearch() {
-    _debounceSearch.cancel();
-    _searchQuery = '';
-    notifyListeners();
-  }
-
-  void searchApps(String query) {
-    _debounceSearch(() {
-      _searchQuery = query;
-      notifyListeners();
-    });
-  }
-
   void _addApp(AppViewmodel appModel) {
     _apps.add(appModel);
     notifyListeners();
@@ -95,6 +70,32 @@ class HomeViewmodel extends ChangeNotifier {
     _apps.remove(appModel);
     notifyListeners();
   }
+}
+
+class HomeViewmodel extends ChangeNotifier with _StateHome {
+  HomeViewmodel(
+    this._appRepository,
+    this._codeHostingRepository,
+    this._installAppUsecase,
+    this._uninstallAppUsecase,
+    this._registerAppUsecase,
+  );
+
+  final AppRepository _appRepository;
+  final CodeHostingRepository _codeHostingRepository;
+  final InstallAppUsecase _installAppUsecase;
+  final UninstallAppUsecase _uninstallAppUsecase;
+  final RegisterAppUsecase _registerAppUsecase;
+
+  late final fetchAppsCommand = Command0(_fetchApps);
+  late final registerAppCommand = Command1(_registerApp);
+  late final checkUpdateCommand = Command0(_checkUpdates);
+  late final deleteAppCommand = Command1(_deleteApp);
+  late final installAppCommand = Command1(
+    _installApp,
+    onCancel: _installAppUsecase.cancelInstall,
+  );
+  late final _uninstallAppCommand = Command1(_uninstallApp);
 
   AsyncResult<Unit> _checkUpdates() async {
     final installedApps = _apps.where((model) {
