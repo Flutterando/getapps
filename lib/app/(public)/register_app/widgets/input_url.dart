@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/design_system/design_system.dart';
+import 'package:localization/localization.dart';
 import 'package:uicons/uicons.dart';
 
 class InputUrl extends StatelessWidget {
@@ -14,7 +15,7 @@ class InputUrl extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Url do Github',
+          'github-link'.i18n(),
           style: context.textTheme.labelMedium?.copyWith(
             fontWeight: FontWeight.w700,
           ),
@@ -23,7 +24,7 @@ class InputUrl extends StatelessWidget {
         TextFormField(
           onChanged: onChanged,
           decoration: InputDecoration(
-            hintText: 'Busca por nome do app',
+            hintText: 'search-by-name'.i18n(),
             suffixIcon: Icon(UIcons.regularRounded.link),
           ),
         ),

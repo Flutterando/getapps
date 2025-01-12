@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
+import 'package:localization/localization.dart';
 
 import '../home/widgets/widgets.dart';
 
@@ -23,7 +24,7 @@ class _MyAppsPageState extends State<MyAppsPage> with HookStateMixin {
             SliverDefaultAppbar(
               onBack: () => Routefly.pop(context),
               title: Text(
-                'Meus Aplicativos',
+                'my-apps'.i18n(),
                 style: context.textTheme.displayLarge,
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getapps/app/(public)/register_app/widgets/input_url.dart';
 import 'package:getapps/app/design_system/design_system.dart';
+import 'package:localization/localization.dart';
 import 'package:routefly/routefly.dart';
 
 class RegisterAppPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _RegisterAppPageState extends State<RegisterAppPage> {
             SliverDefaultAppbar(
               onBack: () => Routefly.pop(context),
               title: Text(
-                'Cadastro',
+                'register'.i18n(),
                 style: context.textTheme.displayLarge,
               ),
             ),
@@ -49,7 +50,7 @@ class _RegisterAppPageState extends State<RegisterAppPage> {
           return ElevatedButton(
             onPressed: () {},
             child: Text(
-              'Cadastrar Aplicativo',
+              'register-app'.i18n(),
               style: context.textTheme.labelLarge,
             ),
           );

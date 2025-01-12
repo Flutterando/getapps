@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:getapps/app/(public)/home/widgets/widgets.dart';
 import 'package:getapps/app/app.dart';
 import 'package:getapps/app/design_system/design_system.dart';
+import 'package:localization/localization.dart';
 import 'package:uicons/uicons.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,7 +36,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
     final apps = useAtomState(filteredAppsState);
     final favoriteApps = useAtomState(favoriteAppsState);
 
-    final isFavoriteView = favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
+    final isFavoriteView =
+        favoriteApps.isNotEmpty && searchTextState.state.isEmpty;
     final size = MediaQuery.sizeOf(context);
     final primary = Theme.of(context).colors.red;
 
@@ -57,7 +59,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             ),
             SliverToBoxAdapter(
               child: AnimatedAlign(
-                alignment: isFavoriteView ? Alignment.center : Alignment.bottomCenter,
+                alignment:
+                    isFavoriteView ? Alignment.center : Alignment.bottomCenter,
                 curve: Curves.easeOut,
                 heightFactor: isFavoriteView ? 1 : 0,
                 duration: const Duration(milliseconds: 500),
@@ -66,7 +69,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Gap(32),
-                    const TitleSectionHome(title: 'Favoritos'),
+                    TitleSectionHome(title: "favorite-title".i18n()),
                     SizedBox(
                       height: 120,
                       width: size.width,
@@ -88,23 +91,31 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                 late Widget buttonLabel;
 
                                 if (app.appNotInstall) {
-                                  buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
+                                  buttonLabel = _buildButtonLabel(
+                                      'install-app'.i18n(),
+                                      UIcons.regularRounded.download);
                                 } else if (app.updateIsAvailable) {
-                                  buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
+                                  buttonLabel = _buildButtonLabel(
+                                      'update-app'.i18n(),
+                                      UIcons.regularRounded.refresh);
                                 } else {
-                                  buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
+                                  buttonLabel = _buildButtonLabel(
+                                      'open-app'.i18n(),
+                                      UIcons.regularRounded.play);
                                 }
                                 return HighlightCard(
                                   title: app.appName,
                                   infoLabel: app.packageInfo.id,
                                   sizeLabel: app.packageInfo.version,
-                                  imageBytes: appModel.app.packageInfo.imageBytes,
+                                  imageBytes:
+                                      appModel.app.packageInfo.imageBytes,
                                   trailing: StatusAppButton(
                                     isLoading: appModel.isLoading,
                                     progress: appModel.downloadPercent,
                                     buttonLabel: buttonLabel,
                                     onTap: () {
-                                      if (app.appNotInstall || app.updateIsAvailable) {
+                                      if (app.appNotInstall ||
+                                          app.updateIsAvailable) {
                                         installAppAction(appModel, '');
                                       } else {
                                         openApp(app);
@@ -114,7 +125,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                       showModalBottomSheet(
                                         context: context,
                                         builder: (context) {
-                                          return AppDetailModalWidget(appModel: appModel);
+                                          return AppDetailModalWidget(
+                                              appModel: appModel);
                                         },
                                       );
                                     },
@@ -132,8 +144,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
               ),
             ),
             const SliverGap(32),
-            const SliverToBoxAdapter(
-              child: TitleSectionHome(title: 'Meus apps'),
+            SliverToBoxAdapter(
+              child: TitleSectionHome(title: "my-apps".i18n()),
             ),
             SliverToBoxAdapter(
               child: AnimatedAppsList(models: apps),
@@ -168,7 +180,8 @@ class AnimatedAppsList extends StatelessWidget {
                 double itemHeight = 100;
                 double itemWidth = 300;
                 int crossAxisCount = (constraints.maxWidth / itemWidth).floor();
-                final aspect = (constraints.maxWidth / crossAxisCount) / itemHeight;
+                final aspect =
+                    (constraints.maxWidth / crossAxisCount) / itemHeight;
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
@@ -189,11 +202,14 @@ class AnimatedAppsList extends StatelessWidget {
                         late Widget buttonLabel;
 
                         if (app.appNotInstall) {
-                          buttonLabel = _buildButtonLabel('Instalar', UIcons.regularRounded.download);
+                          buttonLabel = _buildButtonLabel('install-app'.i18n(),
+                              UIcons.regularRounded.download);
                         } else if (app.updateIsAvailable) {
-                          buttonLabel = _buildButtonLabel('Atualizar', UIcons.regularRounded.refresh);
+                          buttonLabel = _buildButtonLabel('update-app'.i18n(),
+                              UIcons.regularRounded.refresh);
                         } else {
-                          buttonLabel = _buildButtonLabel('Abrir', UIcons.regularRounded.play);
+                          buttonLabel = _buildButtonLabel(
+                              'open-app'.i18n(), UIcons.regularRounded.play);
                         }
                         return Container(
                           decoration: BoxDecoration(
@@ -212,7 +228,8 @@ class AnimatedAppsList extends StatelessWidget {
                                 progress: appModel.downloadPercent,
                                 buttonLabel: buttonLabel,
                                 onTap: () {
-                                  if (app.appNotInstall || app.updateIsAvailable) {
+                                  if (app.appNotInstall ||
+                                      app.updateIsAvailable) {
                                     installAppAction(appModel, '');
                                   } else {
                                     openApp(app);
@@ -222,7 +239,9 @@ class AnimatedAppsList extends StatelessWidget {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (context) {
-                                      return AppDetailModalWidget(appModel: appModel);
+                                      return AppDetailModalWidget(
+                                        appModel: appModel,
+                                      );
                                     },
                                   );
                                 },
@@ -311,7 +330,9 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                         favoriteAppAction(appModel);
                       },
                       child: Icon(
-                        appModel.app.favorite ? Icons.favorite : Icons.favorite_border,
+                        appModel.app.favorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         color: primary,
                         size: 35,
                       ),
@@ -324,9 +345,9 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
               openRepository(appModel);
               Navigator.pop(context);
             },
-            child: const Text(
-              'Abrir Repositório',
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              'open-repository'.i18n(),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
           const Gap(16),
@@ -336,7 +357,10 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                 installAppAction(appModel, '');
                 Navigator.pop(context);
               },
-              child: const Text('Instalar', style: TextStyle(color: Colors.white)),
+              child: Text(
+                'install-app'.i18n(),
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           if (appModel.app.updateIsAvailable)
             ElevatedButton(
@@ -344,7 +368,10 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                 installAppAction(appModel, '');
                 Navigator.pop(context);
               },
-              child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
+              child: Text(
+                'update-app'.i18n(),
+                style: const TextStyle(color: Colors.white),
+              ),
             ),
           if (!appModel.app.appNotInstall && !appModel.app.updateIsAvailable)
             ElevatedButton(
@@ -352,7 +379,8 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                 Navigator.pop(context);
                 openApp(appModel.app);
               },
-              child: const Text('Abrir', style: TextStyle(color: Colors.white)),
+              child: Text('open-app'.i18n(),
+                  style: const TextStyle(color: Colors.white)),
             ),
           const Gap(48),
         ],
@@ -368,8 +396,9 @@ class VersionWidget extends StatelessWidget with HookMixin {
   Widget build(BuildContext context) {
     final version = useAtomState(appVersionState);
     return Text(
-      'Versão $version',
-      style: context.textTheme.labelLarge?.copyWith(color: const Color(0xff939AA5)),
+      'version'.i18n([version]),
+      style: context.textTheme.labelLarge
+          ?.copyWith(color: const Color(0xff939AA5)),
     );
   }
 }
@@ -396,7 +425,8 @@ class StatusAppButton extends StatefulWidget {
   State<StatusAppButton> createState() => _StatusAppButtonState();
 }
 
-class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProviderStateMixin, HookStateMixin {
+class _StatusAppButtonState extends State<StatusAppButton>
+    with SingleTickerProviderStateMixin, HookStateMixin {
   late final _controller = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 800),
@@ -413,20 +443,24 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
   void initState() {
     super.initState();
 
-    _opacityLoadingBackgroundAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+    _opacityLoadingBackgroundAnimation =
+        Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.3),
     ));
 
-    _internalLoadingChildOpacityAnimation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
+    _internalLoadingChildOpacityAnimation =
+        Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.6, 1.0),
     ));
-    _radiusLoadingAnimation = Tween<double>(begin: 12, end: heightSize / 2).animate(CurvedAnimation(
+    _radiusLoadingAnimation =
+        Tween<double>(begin: 12, end: heightSize / 2).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.3),
     ));
-    _widthLoadingAnimation = Tween<double>(begin: 120, end: heightSize).animate(CurvedAnimation(
+    _widthLoadingAnimation =
+        Tween<double>(begin: 120, end: heightSize).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.3, 0.6),
     ));
@@ -509,10 +543,12 @@ class _StatusAppButtonState extends State<StatusAppButton> with SingleTickerProv
             opacity: _opacityLoadingBackgroundAnimation.value,
             child: Material(
               color: backgroundColor,
-              borderRadius: BorderRadius.all(Radius.circular(_radiusLoadingAnimation.value)),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(_radiusLoadingAnimation.value)),
               child: InkWell(
                 onTap: widget.onCancel,
-                borderRadius: BorderRadius.all(Radius.circular(_radiusLoadingAnimation.value)),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(_radiusLoadingAnimation.value)),
                 child: Container(
                   width: _widthLoadingAnimation.value,
                   height: heightSize,

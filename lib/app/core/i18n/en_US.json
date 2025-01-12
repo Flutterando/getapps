@@ -1,0 +1,13 @@
+{
+    "favorite-title": "Favorites",
+    "my-apps": "My Apps",
+    "open-app": "Open",
+    "open-repository": "Open Repository",
+    "update-app": "Update",
+    "install-app": "Install",
+    "version": "Version %s",
+    "search-by-name": "Search by app name",
+    "register": "Register",
+    "register-app": "Register App",
+    "github-link": "GitHub URL"
+}

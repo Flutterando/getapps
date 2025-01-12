@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:getapps/app/design_system/design_system.dart';
+import 'package:localization/localization.dart';
 import 'package:uicons/uicons.dart';
 
 class SliverAppbarHome extends StatefulWidget {
@@ -46,7 +47,7 @@ class _SliverAppbarHomeState extends State<SliverAppbarHome> {
                   controller: _controller,
                   onChanged: widget.onChanged,
                   decoration: InputDecoration(
-                    hintText: 'Busca por nome do app',
+                    hintText: 'search-by-name'.i18n(),
                     suffixIcon: AnimatedBuilder(
                       animation: _controller,
                       builder: (context, child) {
@@ -90,7 +91,8 @@ class _PinnedHeaderDelegate extends SliverPersistentHeaderDelegate {
   _PinnedHeaderDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return child;
   }
 
