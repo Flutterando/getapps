@@ -10,11 +10,22 @@ class AddThisAppInformation {
   AsyncResult<Unit> call() async {
     final getapps = AppEntity.thisAppEntity();
 
-    return _appRepository //
-        .putApp(getapps)
+    return _checkExistApp(getapps) //
         .flatMap(_appRepository.addInfo)
         .flatMap(_codeHostingRepository.getLastRelease)
         .flatMap(_appRepository.putApp)
         .pure(unit);
+  }
+
+  AsyncResult<AppEntity> _checkExistApp(AppEntity app) async {
+    return _appRepository //
+        .fetchApps()
+        .flatMap((apps) {
+      if (apps.contains(app)) {
+        return Success(app);
+      } else {
+        return Failure(Exception('App not found'));
+      }
+    });
   }
 }

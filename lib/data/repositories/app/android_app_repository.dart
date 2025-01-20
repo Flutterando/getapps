@@ -17,6 +17,10 @@ class AndroidAppRepository implements AppRepository {
 
   @override
   AsyncResult<AppEntity> addInfo(AppEntity app) async {
+    if (app.appNotInstall) {
+      return Failure(AndroidPluginException('App not installed: ${app.repository.projectName}'));
+    }
+
     final package = await _androidPackage.getInfoById(app.packageInfo.id);
     if (package == null) {
       return Failure(AndroidPluginException('Package not found: ${app.packageInfo.id}'));
@@ -101,22 +105,30 @@ class AndroidAppRepository implements AppRepository {
         .map(_jsonDecode)
         .map(_listToApps)
         .recover(_recoverEmptyList)
-        .map(
-          (apps) => apps.map((a) => a.toNotInstalled()).toList(),
-        );
+        .flatMap(_addInfos);
   }
 
   @override
   AsyncResult<AppEntity> putApp(AppEntity app) {
     return fetchApps() //
-        .flatMap((apps) {
-          if (apps.indexWhere((element) => element.repository == app.repository) != -1) {
-            return const Failure<String, Exception>(RemoteRepositoryException('App already exists'));
+        .map((apps) {
+          final index = apps.indexWhere((a) => a.repository == app.repository);
+          if (index != -1) {
+            final newApps = [
+              ...apps.sublist(0, index),
+              app.copyWith.packageInfo(imageBytes: []),
+              ...apps.sublist(index + 1),
+            ].map((a) => a.toJson()).toList();
+            return newApps;
           }
 
-          final newApps = [...apps, app.toNotInstalled()].map((a) => a.toJson()).toList();
-          return Success(jsonEncode(newApps));
+          final newApps = [
+            ...apps,
+            app.copyWith.packageInfo(imageBytes: []),
+          ].map((a) => a.toJson()).toList();
+          return newApps;
         })
+        .map(jsonEncode)
         .flatMap((json) => _localStorage.saveData(_localAndroidAppKey, json))
         .pure(app);
   }
@@ -143,7 +155,7 @@ class AndroidAppRepository implements AppRepository {
   }
 
   List<AppEntity> _listToApps(List<Map<String, Object?>> list) {
-    return list.map(NotInstalledAppEntity.fromJson).toList();
+    return list.map(AppEntity.fromJson).toList();
   }
 
   List<Map<String, Object?>> _jsonDecode(String json) {
@@ -155,5 +167,16 @@ class AndroidAppRepository implements AppRepository {
     } catch (e) {
       return [];
     }
+  }
+
+  AsyncResult<List<AppEntity>> _addInfos(List<AppEntity> apps) async {
+    final List<AppEntity> newApps = [];
+
+    for (final app in apps) {
+      final result = await addInfo(app);
+      newApps.add(result.getOrDefault(app));
+    }
+
+    return Success(newApps);
   }
 }

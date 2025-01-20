@@ -100,7 +100,7 @@ Future<void> _installAppIsolateAction(
       .map((app) => app.toLoading())
       .onSuccess(installReceivePort.send)
       .flatMap(appRepository.installApp)
-      .map<AppEntity>((app) => app.toInstalled())
+      .flatMap(appRepository.putApp)
       .pureError<AppEntity>(currentState)
       .merge();
 
