@@ -39,13 +39,13 @@ jobs:
           FLUTTER_ENV: ${{ secrets.FLUTTER_ENV }}
 
       - name: Build APK
-        run: flutter build apk --dart-define-from-file=.env --release --split-per-abi --flavor prod
+        run: flutter build apk --dart-define-from-file=.env --release --split-per-abi
         env:
           KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWD }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
 
       - name: Build AppBundle
-        run: flutter build appbundle --release --flavor prod
+        run: flutter build appbundle --release
         env:
           KEYSTORE_PASSWD: ${{ secrets.KEYSTORE_PASSWD }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
