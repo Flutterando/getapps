@@ -20,10 +20,13 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
+    _init();
+  }
 
-    Future.any([
+  void _init() async {
+    await splashViewModel.addThisAppInformationCommand.execute();
+    await Future.wait([
       homeViewmodel.fetchAppsCommand.execute(),
-      splashViewModel.addThisAppInformationCommand.execute(),
       Future.delayed(const Duration(milliseconds: 2000)),
     ]).then((_) {
       Routefly.navigate(routePaths.home);

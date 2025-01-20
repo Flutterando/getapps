@@ -13,6 +13,7 @@ class AddThisAppInformation {
     return _checkExistApp(getapps) //
         .flatMap(_appRepository.addInfo)
         .flatMap(_codeHostingRepository.getLastRelease)
+        .map((app) => app.copyWith(currentRelease: app.lastRelease))
         .flatMap(_appRepository.putApp)
         .pure(unit);
   }
@@ -21,10 +22,10 @@ class AddThisAppInformation {
     return _appRepository //
         .fetchApps()
         .flatMap((apps) {
-      if (apps.contains(app)) {
+      if (apps.indexWhere((element) => element.packageInfo.id == app.packageInfo.id) == -1) {
         return Success(app);
       } else {
-        return Failure(Exception('App not found'));
+        return Failure(Exception('App has added'));
       }
     });
   }
