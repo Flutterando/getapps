@@ -47,3 +47,5 @@ app.*.map.json
 coverage/
 
 .env
+*.keystore
+*.keystore.base64
