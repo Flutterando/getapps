@@ -146,4 +146,10 @@ class MockAppRepository implements AppRepository {
     _apps.remove(app);
     return Success(app);
   }
+
+  @override
+  AsyncResult<Unit> addSelfAppInformation() {
+    // TODO: implement addSelfAppInformation
+    throw UnimplementedError();
+  }
 }

@@ -91,7 +91,7 @@ class HomeViewmodel extends ChangeNotifier with _StateHome {
   late final registerAppCommand = Command1(_registerApp);
   late final checkUpdateCommand = Command0(_checkUpdates);
   late final deleteAppCommand = Command1(_deleteApp);
-  late final installAppCommand = Command1(
+  late final installAppCommand = Command2(
     _installApp,
     onCancel: _installAppUsecase.cancelInstall,
   );
@@ -139,6 +139,7 @@ class HomeViewmodel extends ChangeNotifier with _StateHome {
       installAppCommand: installAppCommand,
       uninstallAppCommand: _uninstallAppCommand,
       softParentUpdate: notifyListeners,
+      deleteAppCommand: deleteAppCommand,
     );
   }
 
@@ -160,7 +161,7 @@ class HomeViewmodel extends ChangeNotifier with _StateHome {
         .pure(unit);
   }
 
-  AsyncResult<Unit> _installApp(AppViewmodel appModel, [String selectedAsset = '']) async {
+  AsyncResult<Unit> _installApp(AppViewmodel appModel, String selectedAsset) async {
     return _installAppUsecase.call(
       app: appModel.app,
       asset: selectedAsset,

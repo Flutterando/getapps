@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:flutter/services.dart';
 import 'package:getapps/utils/extensions/extensions.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -56,7 +57,14 @@ class InstallAppUsecase {
 
     _installIsolate = await Isolate.spawn(
       _installAppIsolateAction,
-      (app, asset, _installReceivePort!.sendPort, _appRepository, _codeHostingRepository),
+      (
+        app,
+        asset,
+        _installReceivePort!.sendPort,
+        _appRepository,
+        _codeHostingRepository,
+        RootIsolateToken.instance!,
+      ),
     );
 
     await finishIsateCompleter!.future;
@@ -76,8 +84,10 @@ Future<void> _installAppIsolateAction(
       SendPort,
       AppRepository,
       CodeHostingRepository,
+      RootIsolateToken,
     ) record) async {
-  final (app, asset, installReceivePort, appRepository, codeHosting) = record;
+  final (app, asset, installReceivePort, appRepository, codeHosting, rootIsolateToken) = record;
+  BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
 
   final currentState = app;
 

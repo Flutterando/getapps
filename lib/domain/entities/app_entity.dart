@@ -88,11 +88,10 @@ class AppEntity with _$AppEntity {
 
   NotInstalledAppEntity toNotInstalled() {
     return NotInstalledAppEntity(
-      packageInfo: packageInfo,
+      packageInfo: const PackageInfoEntity.empty(),
       repository: repository,
       lastRelease: lastRelease,
       currentRelease: currentRelease,
-      file: file,
       favorite: favorite,
     );
   }

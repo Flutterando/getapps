@@ -7,9 +7,7 @@ abstract class AppRepository {
   AsyncResult<AppEntity> putApp(AppEntity app);
   AsyncResult<AppEntity> deleteApp(AppEntity app);
   AsyncResult<AppEntity> uninstallApp(AppEntity app);
-  AsyncResult<AppEntity> registerApp(AppEntity app);
   AsyncResult<Unit> checkInstallPermission();
   AsyncResult<AppEntity> addInfo(AppEntity app);
-  AsyncResult<List<AppEntity>> addInfos(List<AppEntity> apps);
   AsyncResult<AppEntity> installApp(AppEntity app);
 }

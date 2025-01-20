@@ -4,6 +4,7 @@ import 'package:getapps/main.dart';
 import 'package:getapps/ui/home/widgets/widgets.dart';
 import 'package:getapps/utils/extensions/extensions.dart';
 import 'package:hook_state/hook_state.dart';
+import 'package:path/path.dart' show basename;
 import 'package:routefly/routefly.dart';
 import 'package:uicons/uicons.dart';
 
@@ -35,12 +36,43 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
     final canUpdate = await showModalBottomSheet<bool>(
       context: context,
       builder: (context) {
-        return AppDetailModalWidget(appModel: appModel);
+        return AppDetailModalWidget(appModel: appModel, installApp: _executeInstallDialog);
       },
     );
 
     if (canUpdate == true) {
       homeViewmodel.fetchAppsCommand.execute();
+    }
+  }
+
+  void _executeInstallDialog(AppViewmodel appModel) async {
+    final selectedAsset = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Selecione o arquivo para instalação'),
+          content: SizedBox(
+            width: 300,
+            height: 200,
+            child: ListView.builder(
+              itemCount: appModel.app.lastRelease.assets.length,
+              itemBuilder: (context, index) {
+                final asset = appModel.app.lastRelease.assets[index];
+                return ListTile(
+                  title: Text(basename(asset)),
+                  onTap: () {
+                    Navigator.pop(context, asset);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedAsset != null) {
+      appModel.install(selectedAsset);
     }
   }
 
@@ -67,8 +99,11 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
             SliverAppbarHome(
               onChanged: homeViewmodel.searchApps,
               onMyApp: () {},
-              onRegisterApp: () {
-                Routefly.push(routePaths.registerApp);
+              onRegisterApp: () async {
+                final result = await Routefly.push(routePaths.registerApp);
+                if (result == true) {
+                  homeViewmodel.fetchAppsCommand.execute();
+                }
               },
               onRemoveSearch: homeViewmodel.resetSearch,
             ),
@@ -122,7 +157,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                     buttonLabel: buttonLabel,
                                     onTap: () {
                                       if (app.appNotInstall || app.updateIsAvailable) {
-                                        appModel.install();
+                                        _executeInstallDialog(appModel);
                                       } else {
                                         appModel.openApp();
                                       }
@@ -148,7 +183,13 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
               child: TitleSectionHome(title: 'Meus apps'),
             ),
             SliverToBoxAdapter(
-              child: AnimatedAppsList(models: appModels),
+              child: AnimatedAppsList(
+                models: appModels,
+                installApp: _executeInstallDialog,
+                openApp: (appModel) {
+                  appModel.openApp();
+                },
+              ),
             ),
             SliverToBoxAdapter(
               child: Padding(
@@ -169,7 +210,14 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
 
 class AnimatedAppsList extends StatelessWidget {
   final List<AppViewmodel> models;
-  const AnimatedAppsList({super.key, required this.models});
+  final void Function(AppViewmodel) installApp;
+  final void Function(AppViewmodel) openApp;
+  const AnimatedAppsList({
+    super.key,
+    required this.models,
+    required this.installApp,
+    required this.openApp,
+  });
 
   Widget _buildItem(List<AppViewmodel> apps) {
     return apps.isEmpty
@@ -227,16 +275,19 @@ class AnimatedAppsList extends StatelessWidget {
                                 buttonLabel: buttonLabel,
                                 onTap: () {
                                   if (app.appNotInstall || app.updateIsAvailable) {
-                                    appModel.install();
+                                    installApp(appModel);
                                   } else {
-                                    appModel.openApp();
+                                    openApp(appModel);
                                   }
                                 },
                                 onOptions: () async {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (context) {
-                                      return AppDetailModalWidget(appModel: appModel);
+                                      return AppDetailModalWidget(
+                                        appModel: appModel,
+                                        installApp: installApp,
+                                      );
                                     },
                                   );
                                 },
@@ -299,8 +350,13 @@ Widget _buildButtonLabel(String label, IconData icon) {
 
 class AppDetailModalWidget extends StatelessWidget with HookMixin {
   final AppViewmodel appModel;
+  final void Function(AppViewmodel) installApp;
 
-  const AppDetailModalWidget({super.key, required this.appModel});
+  const AppDetailModalWidget({
+    super.key,
+    required this.appModel,
+    required this.installApp,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -345,20 +401,20 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
           if (appModel.app.appNotInstall)
             ElevatedButton(
               onPressed: () {
-                appModel.install();
+                installApp(appModel);
                 Navigator.pop(context);
               },
               child: const Text('Instalar', style: TextStyle(color: Colors.white)),
             ),
-          if (appModel.app.updateIsAvailable)
+          if (appModel.app.updateIsAvailable && !appModel.app.appNotInstall)
             ElevatedButton(
               onPressed: () {
-                appModel.install();
+                installApp(appModel);
                 Navigator.pop(context);
               },
               child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
             ),
-          if (!appModel.app.appNotInstall && !appModel.app.updateIsAvailable)
+          if (!appModel.app.appNotInstall)
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -375,6 +431,17 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
                   appModel.uninstall();
                 },
                 child: const Text('Desinstalar', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          if (appModel.app.appNotInstall)
+            Padding(
+              padding: 16.0.paddingTop,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  appModel.delete();
+                },
+                child: const Text('Deletar App', style: TextStyle(color: Colors.white)),
               ),
             ),
           const Gap(48),

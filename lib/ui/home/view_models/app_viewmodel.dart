@@ -5,20 +5,23 @@ class AppViewmodel extends ChangeNotifier {
     required AppEntity app,
     required CodeHostingRepository codeHostingRepository,
     required AppRepository appRepository,
-    required Command1<Unit, AppViewmodel> installAppCommand,
+    required Command2<Unit, AppViewmodel, String> installAppCommand,
     required Command1<Unit, AppViewmodel> uninstallAppCommand,
+    required Command1<Unit, AppViewmodel> deleteAppCommand,
     required VoidCallback softParentUpdate,
   })  : _app = app,
         _codeHostingRepository = codeHostingRepository,
         _appRepository = appRepository,
         _installAppCommand = installAppCommand,
         _uninstallAppCommand = uninstallAppCommand,
+        _deleteAppCommand = deleteAppCommand,
         _softParentUpdate = softParentUpdate;
 
   final VoidCallback _softParentUpdate;
   final CodeHostingRepository _codeHostingRepository;
   final AppRepository _appRepository;
-  final Command1<Unit, AppViewmodel> _installAppCommand;
+  final Command2<Unit, AppViewmodel, String> _installAppCommand;
+  final Command1<Unit, AppViewmodel> _deleteAppCommand;
 
   final Command1<Unit, AppViewmodel> _uninstallAppCommand;
   late final favoriteAppCommand = Command0(_favoriteApp);
@@ -40,8 +43,16 @@ class AppViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> install() async {
-    await _installAppCommand.execute(this);
+  Future<void> install(String selectedAsset) async {
+    if (selectedAsset.isEmpty) {
+      return;
+    }
+
+    await _installAppCommand.execute(this, selectedAsset);
+  }
+
+  Future<void> delete() async {
+    await _deleteAppCommand.execute(this);
   }
 
   Future<void> uninstall() async {

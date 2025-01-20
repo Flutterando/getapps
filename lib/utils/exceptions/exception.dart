@@ -1,17 +1,15 @@
-import 'package:flutter/foundation.dart';
-
 abstract class AppException implements Exception {
   final String message;
   final StackTrace? stackTrace;
 
-  AppException(this.message, [this.stackTrace]) {
-    if (stackTrace != null) {
-      debugPrint('AppException: $message\n$stackTrace');
-    } else {
-      debugPrint('AppException: $message');
-    }
-  }
+  const AppException(this.message, [this.stackTrace]);
 
   @override
-  String toString() => message;
+  String toString() {
+    if (stackTrace != null) {
+      return '$runtimeType: $message\n$stackTrace';
+    } else {
+      return '$runtimeType: $message';
+    }
+  }
 }
