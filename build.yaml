@@ -2,7 +2,7 @@ targets:
   $default:
     sources:
       include:
-        - lib/app/domain/**
+        - lib/domain/**
       exclude:
         - lib/**.freezed.dart
         - lib/**.g.dart

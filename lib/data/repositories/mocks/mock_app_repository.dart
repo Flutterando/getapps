@@ -109,11 +109,6 @@ class MockAppRepository implements AppRepository {
   }
 
   @override
-  AsyncResult<List<AppEntity>> addInfos(List<AppEntity> apps) async {
-    return Success(apps);
-  }
-
-  @override
   AsyncResult<Unit> checkInstallPermission() async {
     return Success.unit();
   }
@@ -138,18 +133,5 @@ class MockAppRepository implements AppRepository {
 
     _apps.add(app);
     return Success(app);
-  }
-
-  @override
-  AsyncResult<AppEntity> registerApp(AppEntity app) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    _apps.remove(app);
-    return Success(app);
-  }
-
-  @override
-  AsyncResult<Unit> addSelfAppInformation() {
-    // TODO: implement addSelfAppInformation
-    throw UnimplementedError();
   }
 }

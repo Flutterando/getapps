@@ -5,17 +5,21 @@ import 'package:getapps/data/repositories/app/android_app_repository.dart';
 import 'package:getapps/data/services/client_http.dart';
 import 'package:getapps/data/services/local_storage.dart';
 import 'package:getapps/ui/home/view_models/home_viewmodel.dart';
+import 'package:getapps/ui/splash/view_models/splash_viewmodel.dart';
 
 import '../data/repositories/app/remote_code_hosting_repository.dart';
 import '../domain/domain.dart';
-import '../domain/usecases/add_this_app_information.dart';
 import '../ui/register_app/viewmodels/register_app_viewmodel.dart';
 
 final injector = AutoInjector();
 
 void setupInjection() {
   // data
-  injector.addInstance<Dio>(Dio());
+  injector.addInstance<Dio>(Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 5),
+    ),
+  ));
   injector.addInstance<AndroidPackage>(AndroidPackage());
   injector.addSingleton(ClientHttp.new);
   injector.addSingleton(LocalStorage.new);
@@ -31,6 +35,7 @@ void setupInjection() {
   // ui
   injector.addLazySingleton(HomeViewmodel.new);
   injector.addLazySingleton(RegisterAppViewmodel.new);
+  injector.addLazySingleton(SplashViewmodel.new);
 
   injector.commit();
 }

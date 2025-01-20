@@ -1,3 +1,4 @@
+import 'package:getapps/config/constants.dart';
 import 'package:getapps/data/services/client_http.dart';
 import 'package:getapps/domain/domain.dart';
 import 'package:result_dart/result_dart.dart';
@@ -29,7 +30,7 @@ class RemoteCodeHostingRepository implements CodeHostingRepository {
 
     return _clientHttp.get(url, headers: {
       'Accept': 'application/vnd.github.v3+json',
-      'Authorization': 'token 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',
+      'Authorization': 'token $githubToken',
     }).flatMap((response) {
       final data = response.data as Map<String, dynamic>;
       final tagName = data['tag_name'] as String;

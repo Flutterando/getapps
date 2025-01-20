@@ -27,9 +27,10 @@ void main() {
       app: app,
       codeHostingRepository: codeHostingRepository,
       appRepository: appRepository,
-      installAppCommand: Command1((v) async => const Success(unit)),
+      installAppCommand: Command2((v, s) async => const Success(unit)),
       uninstallAppCommand: Command1((v) async => const Success(unit)),
       softParentUpdate: () {},
+      deleteAppCommand: Command1((v) async => const Success(unit)),
     );
   });
 

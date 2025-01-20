@@ -7,7 +7,11 @@
         {
             "name": "getapps",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--dart-define-from-file",
+                ".env"
+            ]
         },
         {
             "name": "example plugin",

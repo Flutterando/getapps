@@ -5,6 +5,7 @@ export 'entities/repository_entity.dart';
 export 'exceptions/exceptions.dart';
 export 'repositories/app_repository.dart';
 export 'repositories/code_hosting_repository.dart';
+export 'usecases/add_this_app_information.dart';
 export 'usecases/install_app_usecase.dart';
 export 'usecases/register_app_usecase.dart';
 export 'usecases/uninstall_app_usecase.dart';
