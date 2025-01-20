@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                           return SizedBox(
                             width: 300,
                             child: AnimatedBuilder(
-                              key: ObjectKey(appModel),
+                              key: Key(appModel.app.packageInfo.id),
                               animation: appModel,
                               builder: (context, child) {
                                 final app = appModel.app;
@@ -150,7 +150,8 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
                                   title: app.appName,
                                   infoLabel: app.packageInfo.id,
                                   sizeLabel: app.packageInfo.version,
-                                  imageBytes: appModel.app.packageInfo.imageBytes,
+                                  imageBytes: app.packageInfo.imageBytes,
+                                  color: app.packageInfo.dominantColor ?? Colors.black,
                                   trailing: StatusAppButton(
                                     isLoading: appModel.isLoading,
                                     progress: appModel.downloadPercent,
@@ -244,7 +245,7 @@ class AnimatedAppsList extends StatelessWidget {
                     final appModel = apps[index];
 
                     return AnimatedBuilder(
-                      key: ObjectKey(appModel),
+                      key: Key(appModel.app.packageInfo.id),
                       animation: appModel,
                       builder: (context, child) {
                         final app = appModel.app;
@@ -397,30 +398,38 @@ class AppDetailModalWidget extends StatelessWidget with HookMixin {
               style: TextStyle(color: Colors.white),
             ),
           ),
-          const Gap(16),
           if (appModel.app.appNotInstall)
-            ElevatedButton(
-              onPressed: () {
-                installApp(appModel);
-                Navigator.pop(context);
-              },
-              child: const Text('Instalar', style: TextStyle(color: Colors.white)),
+            Padding(
+              padding: 16.0.paddingTop,
+              child: ElevatedButton(
+                onPressed: () {
+                  installApp(appModel);
+                  Navigator.pop(context);
+                },
+                child: const Text('Instalar', style: TextStyle(color: Colors.white)),
+              ),
             ),
           if (appModel.app.updateIsAvailable && !appModel.app.appNotInstall)
-            ElevatedButton(
-              onPressed: () {
-                installApp(appModel);
-                Navigator.pop(context);
-              },
-              child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
+            Padding(
+              padding: 16.0.paddingTop,
+              child: ElevatedButton(
+                onPressed: () {
+                  installApp(appModel);
+                  Navigator.pop(context);
+                },
+                child: const Text('Atualizar', style: TextStyle(color: Colors.white)),
+              ),
             ),
           if (!appModel.app.appNotInstall)
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                appModel.openApp();
-              },
-              child: const Text('Abrir', style: TextStyle(color: Colors.white)),
+            Padding(
+              padding: 16.0.paddingTop,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  appModel.openApp();
+                },
+                child: const Text('Abrir', style: TextStyle(color: Colors.white)),
+              ),
             ),
           if (!appModel.app.appNotInstall)
             Padding(

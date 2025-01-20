@@ -31,35 +31,62 @@ PackageInfoEntity _$PackageInfoEntityFromJson(Map<String, dynamic> json) {
 mixin _$PackageInfoEntity {
   String get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false)
+  Color? get dominantColor => throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false)
   List<int> get imageBytes => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)
         $default, {
     required TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)
         empty,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
     required TResult orElse(),
   }) =>
@@ -100,7 +127,12 @@ abstract class $PackageInfoEntityCopyWith<$Res> {
           PackageInfoEntity value, $Res Function(PackageInfoEntity) then) =
       _$PackageInfoEntityCopyWithImpl<$Res, PackageInfoEntity>;
   @useResult
-  $Res call({String id, String? name, List<int> imageBytes, String version});
+  $Res call(
+      {String id,
+      String? name,
+      @JsonKey(includeFromJson: false) Color? dominantColor,
+      @JsonKey(includeFromJson: false) List<int> imageBytes,
+      String version});
 }
 
 /// @nodoc
@@ -120,6 +152,7 @@ class _$PackageInfoEntityCopyWithImpl<$Res, $Val extends PackageInfoEntity>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? dominantColor = freezed,
     Object? imageBytes = null,
     Object? version = null,
   }) {
@@ -132,6 +165,10 @@ class _$PackageInfoEntityCopyWithImpl<$Res, $Val extends PackageInfoEntity>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      dominantColor: freezed == dominantColor
+          ? _value.dominantColor
+          : dominantColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       imageBytes: null == imageBytes
           ? _value.imageBytes
           : imageBytes // ignore: cast_nullable_to_non_nullable
@@ -152,7 +189,12 @@ abstract class _$$PackageInfoEntityImplCopyWith<$Res>
       __$$PackageInfoEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? name, List<int> imageBytes, String version});
+  $Res call(
+      {String id,
+      String? name,
+      @JsonKey(includeFromJson: false) Color? dominantColor,
+      @JsonKey(includeFromJson: false) List<int> imageBytes,
+      String version});
 }
 
 /// @nodoc
@@ -170,6 +212,7 @@ class __$$PackageInfoEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = freezed,
+    Object? dominantColor = freezed,
     Object? imageBytes = null,
     Object? version = null,
   }) {
@@ -182,6 +225,10 @@ class __$$PackageInfoEntityImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      dominantColor: freezed == dominantColor
+          ? _value.dominantColor
+          : dominantColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       imageBytes: null == imageBytes
           ? _value._imageBytes
           : imageBytes // ignore: cast_nullable_to_non_nullable
@@ -200,7 +247,8 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
   const _$PackageInfoEntityImpl(
       {required this.id,
       this.name,
-      required final List<int> imageBytes,
+      @JsonKey(includeFromJson: false) this.dominantColor,
+      @JsonKey(includeFromJson: false) final List<int> imageBytes = const [],
       required this.version,
       final String? $type})
       : _imageBytes = imageBytes,
@@ -214,8 +262,12 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
   final String id;
   @override
   final String? name;
+  @override
+  @JsonKey(includeFromJson: false)
+  final Color? dominantColor;
   final List<int> _imageBytes;
   @override
+  @JsonKey(includeFromJson: false)
   List<int> get imageBytes {
     if (_imageBytes is EqualUnmodifiableListView) return _imageBytes;
     // ignore: implicit_dynamic_type
@@ -230,7 +282,7 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
 
   @override
   String toString() {
-    return 'PackageInfoEntity(id: $id, name: $name, imageBytes: $imageBytes, version: $version)';
+    return 'PackageInfoEntity(id: $id, name: $name, dominantColor: $dominantColor, imageBytes: $imageBytes, version: $version)';
   }
 
   @override
@@ -240,6 +292,8 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
             other is _$PackageInfoEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.dominantColor, dominantColor) ||
+                other.dominantColor == dominantColor) &&
             const DeepCollectionEquality()
                 .equals(other._imageBytes, _imageBytes) &&
             (identical(other.version, version) || other.version == version));
@@ -247,7 +301,7 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name,
+  int get hashCode => Object.hash(runtimeType, id, name, dominantColor,
       const DeepCollectionEquality().hash(_imageBytes), version);
 
   /// Create a copy of PackageInfoEntity
@@ -263,41 +317,65 @@ class _$PackageInfoEntityImpl extends _PackageInfoEntity {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)
         $default, {
     required TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)
         empty,
   }) {
-    return $default(id, name, imageBytes, version);
+    return $default(id, name, dominantColor, imageBytes, version);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
   }) {
-    return $default?.call(id, name, imageBytes, version);
+    return $default?.call(id, name, dominantColor, imageBytes, version);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
     required TResult orElse(),
   }) {
     if ($default != null) {
-      return $default(id, name, imageBytes, version);
+      return $default(id, name, dominantColor, imageBytes, version);
     }
     return orElse();
   }
@@ -345,7 +423,8 @@ abstract class _PackageInfoEntity extends PackageInfoEntity {
   const factory _PackageInfoEntity(
       {required final String id,
       final String? name,
-      required final List<int> imageBytes,
+      @JsonKey(includeFromJson: false) final Color? dominantColor,
+      @JsonKey(includeFromJson: false) final List<int> imageBytes,
       required final String version}) = _$PackageInfoEntityImpl;
   const _PackageInfoEntity._() : super._();
 
@@ -357,6 +436,10 @@ abstract class _PackageInfoEntity extends PackageInfoEntity {
   @override
   String? get name;
   @override
+  @JsonKey(includeFromJson: false)
+  Color? get dominantColor;
+  @override
+  @JsonKey(includeFromJson: false)
   List<int> get imageBytes;
   @override
   String get version;
@@ -378,7 +461,12 @@ abstract class _$$EmptyPackageInfoEntityImplCopyWith<$Res>
       __$$EmptyPackageInfoEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String? name, List<int> imageBytes, String version});
+  $Res call(
+      {String id,
+      String? name,
+      @JsonKey(includeFromJson: false) List<int> imageBytes,
+      @JsonKey(includeFromJson: false) Color? dominantColor,
+      String version});
 }
 
 /// @nodoc
@@ -398,6 +486,7 @@ class __$$EmptyPackageInfoEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = freezed,
     Object? imageBytes = null,
+    Object? dominantColor = freezed,
     Object? version = null,
   }) {
     return _then(_$EmptyPackageInfoEntityImpl(
@@ -413,6 +502,10 @@ class __$$EmptyPackageInfoEntityImplCopyWithImpl<$Res>
           ? _value._imageBytes
           : imageBytes // ignore: cast_nullable_to_non_nullable
               as List<int>,
+      dominantColor: freezed == dominantColor
+          ? _value.dominantColor
+          : dominantColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -427,7 +520,8 @@ class _$EmptyPackageInfoEntityImpl extends EmptyPackageInfoEntity {
   const _$EmptyPackageInfoEntityImpl(
       {this.id = '',
       this.name = null,
-      final List<int> imageBytes = const [],
+      @JsonKey(includeFromJson: false) final List<int> imageBytes = const [],
+      @JsonKey(includeFromJson: false) this.dominantColor,
       this.version = '',
       final String? $type})
       : _imageBytes = imageBytes,
@@ -445,13 +539,16 @@ class _$EmptyPackageInfoEntityImpl extends EmptyPackageInfoEntity {
   final String? name;
   final List<int> _imageBytes;
   @override
-  @JsonKey()
+  @JsonKey(includeFromJson: false)
   List<int> get imageBytes {
     if (_imageBytes is EqualUnmodifiableListView) return _imageBytes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_imageBytes);
   }
 
+  @override
+  @JsonKey(includeFromJson: false)
+  final Color? dominantColor;
   @override
   @JsonKey()
   final String version;
@@ -461,7 +558,7 @@ class _$EmptyPackageInfoEntityImpl extends EmptyPackageInfoEntity {
 
   @override
   String toString() {
-    return 'PackageInfoEntity.empty(id: $id, name: $name, imageBytes: $imageBytes, version: $version)';
+    return 'PackageInfoEntity.empty(id: $id, name: $name, imageBytes: $imageBytes, dominantColor: $dominantColor, version: $version)';
   }
 
   @override
@@ -473,13 +570,15 @@ class _$EmptyPackageInfoEntityImpl extends EmptyPackageInfoEntity {
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality()
                 .equals(other._imageBytes, _imageBytes) &&
+            (identical(other.dominantColor, dominantColor) ||
+                other.dominantColor == dominantColor) &&
             (identical(other.version, version) || other.version == version));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, name,
-      const DeepCollectionEquality().hash(_imageBytes), version);
+      const DeepCollectionEquality().hash(_imageBytes), dominantColor, version);
 
   /// Create a copy of PackageInfoEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -494,41 +593,65 @@ class _$EmptyPackageInfoEntityImpl extends EmptyPackageInfoEntity {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)
         $default, {
     required TResult Function(
-            String id, String? name, List<int> imageBytes, String version)
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)
         empty,
   }) {
-    return empty(id, name, imageBytes, version);
+    return empty(id, name, imageBytes, dominantColor, version);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult? Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
   }) {
-    return empty?.call(id, name, imageBytes, version);
+    return empty?.call(id, name, imageBytes, dominantColor, version);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            String version)?
         $default, {
     TResult Function(
-            String id, String? name, List<int> imageBytes, String version)?
+            String id,
+            String? name,
+            @JsonKey(includeFromJson: false) List<int> imageBytes,
+            @JsonKey(includeFromJson: false) Color? dominantColor,
+            String version)?
         empty,
     required TResult orElse(),
   }) {
     if (empty != null) {
-      return empty(id, name, imageBytes, version);
+      return empty(id, name, imageBytes, dominantColor, version);
     }
     return orElse();
   }
@@ -576,7 +699,8 @@ abstract class EmptyPackageInfoEntity extends PackageInfoEntity {
   const factory EmptyPackageInfoEntity(
       {final String id,
       final String? name,
-      final List<int> imageBytes,
+      @JsonKey(includeFromJson: false) final List<int> imageBytes,
+      @JsonKey(includeFromJson: false) final Color? dominantColor,
       final String version}) = _$EmptyPackageInfoEntityImpl;
   const EmptyPackageInfoEntity._() : super._();
 
@@ -588,7 +712,11 @@ abstract class EmptyPackageInfoEntity extends PackageInfoEntity {
   @override
   String? get name;
   @override
+  @JsonKey(includeFromJson: false)
   List<int> get imageBytes;
+  @override
+  @JsonKey(includeFromJson: false)
+  Color? get dominantColor;
   @override
   String get version;
 

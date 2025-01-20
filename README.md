@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Desenvolvido por Flutterando](https://img.shields.io/badge/Desenvolvido%20por-Flutterando-blue)](https://flutterando.com.br)
-[![Versão do Flutter](https://img.shields.io/badge/Flutter-3.5+-blue)](https://flutter.dev)
+[![Versão do Flutter](https://img.shields.io/badge/Flutter-3.27+-blue)](https://flutter.dev)
 [![Licença](https://img.shields.io/badge/Licença-MIT-green)](LICENSE)
 
 </div>
@@ -20,14 +20,14 @@ GetApps é uma poderosa aplicação Flutter desenvolvida com ❤️ pela comunid
 - 🛣️ Gerenciamento de rotas com `routefly`
 - 🔄 Programação assíncrona com `flutter_isolate`
 - 🎨 Interface moderna com `uicons` e `gap`
-- 🌐 Cliente HTTP usando `uno`
+- 🌐 Cliente HTTP usando `dio`
 - ✨ Tratamento de resultados com `result_dart`
 
 ## Como Começar
 
 ### Pré-requisitos
 
-- Flutter SDK ^3.5.3
+- Flutter SDK ^3.27.1
 - Dart SDK ^3.5.3
 - Sua IDE favorita (VS Code, Android Studio, etc.)
 

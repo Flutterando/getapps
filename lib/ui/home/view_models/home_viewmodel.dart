@@ -8,7 +8,15 @@ import '../../../domain/domain.dart';
 part 'app_viewmodel.dart';
 
 mixin _StateHome on ChangeNotifier {
-  String _appVersion = '';
+  String get _appVersion {
+    return apps //
+            .map((e) => e.app)
+            .where((app) => app.packageInfo.id == AppEntity.thisAppEntity().packageInfo.id)
+            .map((app) => app.packageInfo.version)
+            .firstOrNull ??
+        '0.0.0';
+  }
+
   String get appVersion => _appVersion;
 
   final _debounceSearch = Debounce(delay: const Duration(milliseconds: 800));
@@ -55,9 +63,6 @@ mixin _StateHome on ChangeNotifier {
 
   void _setApps(List<AppViewmodel> apps) {
     _apps = apps;
-    if (_apps.isNotEmpty) {
-      _appVersion = _apps.first.app.packageInfo.version;
-    }
     notifyListeners();
   }
 

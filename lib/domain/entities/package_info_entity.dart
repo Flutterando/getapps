@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'package_info_entity.freezed.dart';
@@ -10,14 +12,16 @@ sealed class PackageInfoEntity with _$PackageInfoEntity {
   const factory PackageInfoEntity({
     required String id,
     String? name,
-    required List<int> imageBytes,
+    @JsonKey(includeFromJson: false) Color? dominantColor,
+    @JsonKey(includeFromJson: false) @Default([]) List<int> imageBytes,
     required String version,
   }) = _PackageInfoEntity;
 
   const factory PackageInfoEntity.empty({
     @Default('') String id,
     @Default(null) String? name,
-    @Default([]) List<int> imageBytes,
+    @JsonKey(includeFromJson: false) @Default([]) List<int> imageBytes,
+    @JsonKey(includeFromJson: false) Color? dominantColor,
     @Default('') String version,
   }) = EmptyPackageInfoEntity;
 
