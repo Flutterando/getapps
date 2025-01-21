@@ -46,6 +46,15 @@ class _HomePageState extends State<HomePage> with HookStateMixin {
   }
 
   void _executeInstallDialog(AppViewmodel appModel) async {
+    if (appModel.app.lastRelease.assets.isEmpty) {
+      return;
+    }
+
+    if (appModel.app.lastRelease.assets.length == 1) {
+      appModel.install(appModel.app.lastRelease.assets.first);
+      return;
+    }
+
     final selectedAsset = await showDialog<String>(
       context: context,
       builder: (context) {

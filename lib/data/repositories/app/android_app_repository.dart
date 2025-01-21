@@ -5,7 +5,6 @@ import 'package:getapps/data/exceptions/exceptions.dart';
 import 'package:getapps/data/services/local_storage.dart';
 import 'package:getapps/domain/entities/app_entity.dart';
 import 'package:getapps/domain/repositories/app_repository.dart';
-import 'package:getapps/utils/functions/functions.dart';
 import 'package:result_dart/result_dart.dart';
 
 const _localAndroidAppKey = 'local_android_apps';
@@ -27,13 +26,10 @@ class AndroidAppRepository implements AppRepository {
       return Failure(AndroidPluginException('Package not found: ${app.packageInfo.id}'));
     }
 
-    final color = await getDominantColor(package.icon);
-
     final newApp = app.copyWith.packageInfo(
       name: package.name,
       version: package.version,
       imageBytes: package.icon,
-      dominantColor: color.color,
     );
 
     return Success(newApp);

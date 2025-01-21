@@ -123,12 +123,25 @@ class HomeViewmodel extends ChangeNotifier with _StateHome {
   AsyncResult<List<AppViewmodel>> _fetchApps([_]) {
     return _appRepository //
         .fetchApps()
-        .map(_mapAppsToModels)
+        .flatMap(_mapAppsToModels)
         .onSuccess(_setApps);
   }
 
-  List<AppViewmodel> _mapAppsToModels(List<AppEntity> apps) {
-    return apps.map(_createAppViewmodel).toList();
+  AsyncResult<List<AppViewmodel>> _mapAppsToModels(List<AppEntity> apps) async {
+    final newApps = <AppEntity>[];
+
+    for (var app in apps) {
+      if (app.appNotInstall) {
+        newApps.add(app);
+        continue;
+      }
+
+      final color = await getDominantColor(app.packageInfo.imageBytes);
+      final newApp = app.copyWith.packageInfo(dominantColor: color.color);
+      newApps.add(newApp);
+    }
+
+    return Success(newApps.map(_createAppViewmodel).toList());
   }
 
   @visibleForTesting
@@ -170,7 +183,15 @@ class HomeViewmodel extends ChangeNotifier with _StateHome {
     return _installAppUsecase.call(
       app: appModel.app,
       asset: selectedAsset,
-      onChangeApp: appModel._updateApp,
+      onChangeApp: (app) async {
+        if (app is InstalledAppEntity) {
+          final color = await getDominantColor(app.packageInfo.imageBytes);
+          final newApp = app.copyWith.packageInfo(dominantColor: color.color);
+          appModel._updateApp(newApp);
+        } else {
+          appModel._updateApp(app);
+        }
+      },
     );
   }
 
